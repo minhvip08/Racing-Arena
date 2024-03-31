@@ -3,7 +3,13 @@ plugins {
 }
 
 group = 'org.trietng'
-version = '1.0-SNAPSHOT'
+version = "1.0"
+//Defines 'extra' (custom) properties for all projects
+ext {
+    appName = "Racing Arena"
+    //Versions of the libGDX dependencies (used further below on those 'compile' lines)
+    gdxVersion = '1.12.1'
+}
 
 repositories {
     mavenCentral()
@@ -12,6 +18,10 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 }
 
 test {
