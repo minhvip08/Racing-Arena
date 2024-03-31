@@ -1,4 +1,4 @@
-package org.racingarena;
+package org.racingarena.server;
 
 public class Main {
     public static void main(String[] args) {
