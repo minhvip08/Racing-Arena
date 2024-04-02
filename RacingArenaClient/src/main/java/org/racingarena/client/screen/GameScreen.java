@@ -1,14 +1,21 @@
 package org.racingarena.client.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
+
+import java.util.Arrays;
 
 public class GameScreen implements Screen {
     final RacingArena game;
@@ -22,10 +29,14 @@ public class GameScreen implements Screen {
     Texture audienceT;
     TextureRegion[] carTR;
     TextureRegion audienceTR;
+    int[] carPos;
+    // distance travel
+    private int distance = 0;
     // test variables only, could change later
     private int raceLength = 5;
     private int playerCount = 10;
-
+    // simulate the state of player
+    private PlayerState playerState = PlayerState.RACING;
     public GameScreen(final RacingArena game) {
         this.game = game;
         carT = new Texture(Gdx.files.classpath("textures/cars.png"));
@@ -35,6 +46,8 @@ public class GameScreen implements Screen {
         finish2T = new Texture(Gdx.files.classpath("textures/finish_line_inverted.png"));
         audienceT = new Texture(Gdx.files.classpath("textures/audience.png"), true);
         carTR = new TextureRegion[Property.NCAR];
+        carPos = new int[Property.NCAR];
+        Arrays.fill(carPos, Property.TSIZE);
         for (int i = 0; i < Property.TCAR_NCOL; ++i) {
             carTR[i] = new TextureRegion(carT, i * 32, 0, 32, 32);
             carTR[i].flip(false, true);
@@ -78,9 +91,36 @@ public class GameScreen implements Screen {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             game.batch.draw(edgeT, (Property.LRACE_MAX + 1) * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
-            game.batch.draw(carTR[i - 1], Property.TSIZE, i * Property.TSIZE, Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
+            game.batch.draw(carTR[i - 1], carPos[i - 1], i * Property.TSIZE, Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
         }
         game.batch.end();
+        // RIGHT is equivalent to the server announcing the result
+        if (playerState == PlayerState.RACING && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            playerState = PlayerState.WAITING;
+            distance = Property.TSIZE;
+        }
+        if (playerState == PlayerState.WAITING) {
+            // Simulate server interruption with N key pressed signal
+            if (Gdx.input.isKeyPressed(Input.Keys.N)) {
+                playerState = PlayerState.RACING;
+                distance = 0;
+                // Should forcefully teleport the car forward
+                carPos[0] += Property.TSIZE - carPos[0] % Property.TSIZE;
+            }
+            else if (distance == 0) {
+                playerState = PlayerState.RACING;
+            }
+            else {
+                distance -= Property.SPEED;
+                // increment to move forward, decrement to move backward
+                carPos[0] += Property.SPEED;
+            }
+        }
+        // Simulate player disqualification with D key pressed signal
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            playerState = PlayerState.DISQUALIFIED;
+            // TODO: add grey filter
+        }
     }
 
     @Override
