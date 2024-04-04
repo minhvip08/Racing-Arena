@@ -3,21 +3,15 @@ package org.racingarena.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
-
-import java.util.Arrays;
 
 public class GameScreen implements Screen {
     final RacingArena game;
@@ -36,7 +30,7 @@ public class GameScreen implements Screen {
     private int distance = 0;
     // test variables only, could change later
     private int raceLength = 5;
-    private int playerCount = 10;
+    private int playerCount = 5;
     // simulate the state of player
     private PlayerState playerState = PlayerState.RACING;
     public GameScreen(final RacingArena game) {
@@ -80,7 +74,7 @@ public class GameScreen implements Screen {
             game.batch.draw(audienceT, i * Property.TSIZE, 0, Property.TSIZE, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 0, Property.TSIZE * 2, 0, Property.TSIZE * 2, Property.TSIZE * 2, false, true);
         }
         game.batch.draw(audienceT, Property.LRACE_MAX * Property.TSIZE, 0, Property.TSIZE, Property.ROTATE_ORIGIN, Property.TSIZE * 2, Property.TSIZE, 1, 1, 0, 0, 0, Property.TSIZE * 4, Property.TSIZE * 2, true, true);
-        for (int i = 1; i <= playerCount; ++i) {
+        for (int i = 1; i <= Property.NCAR; ++i) {
             game.batch.draw(edgeT, 0, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             for (int j = 1; j < raceLength; ++j) {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
@@ -94,7 +88,9 @@ public class GameScreen implements Screen {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             game.batch.draw(edgeT, (Property.LRACE_MAX + 1) * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
-            game.batch.draw(carS[i - 1], carS[i - 1].getX(), carS[i - 1].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
+        }
+        for (int i = 0; i < playerCount; ++i) {
+            game.batch.draw(carS[i], carS[i].getX(), carS[i].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
         }
         game.batch.end();
         // RIGHT is equivalent to the server announcing the result
@@ -149,6 +145,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         carT.dispose();
+        carGreyT.dispose();
         roadT.dispose();
         edgeT.dispose();
         finish1T.dispose();
