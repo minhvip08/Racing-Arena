@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'idea'
 }
 
 group = 'org.racingarena.client'
@@ -9,6 +10,23 @@ ext {
     appName = "Racing Arena"
     //Versions of the libGDX dependencies (used further below on those 'compile' lines)
     gdxVersion = '1.12.1'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': 'org.racingarena.client.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
 }
 
 repositories {
