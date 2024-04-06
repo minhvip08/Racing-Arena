@@ -9,4 +9,5 @@ public class Status {
     public static final String SERVER_RESUME = "SERVER_RESUME";
     public static final String SERVER_RESTART = "SERVER_RESTART";
     public static final String SERVER_SHUTDOWN = "SERVER_SHUTDOWN";
+    public static final String SERVER_MESSAGE = "SERVER_MESSAGE";
 }

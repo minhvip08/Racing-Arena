@@ -9,7 +9,7 @@ public class AppSocketClient {
         logger.info("Client started");
         try {
             TCPClient client = new TCPClient(logger);
-            client.start();
+            client.run();
         } catch (Exception e) {
             logger.severe("Error: " + e.getMessage());
         }

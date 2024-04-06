@@ -32,7 +32,7 @@ public class TCPServer extends Thread{
         this.serverSocket.bind(new InetSocketAddress("0.0.0.0", ConstantVariable.PORT));
 
         this.serverSocketChannel.configureBlocking(false);
-        this.serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        this.serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); // RETURN SELECTION KEY
     }
 
     @Override
@@ -65,9 +65,14 @@ public class TCPServer extends Thread{
                         } else {
                             logger.info("Message received: " + message);
                             JSONObject obj = new JSONObject(message);
-                            handleRegister(key, obj);
+                            if (obj.getString("status").equals(Status.SERVER_REGISTER)){
+                                handleRegister(key, obj);
 
-                            handleClose(key);
+                            }
+
+                            if (obj.getString("status").equals(Status.SERVER_SHUTDOWN)){
+                                handleClose(key);
+                            }
 
 //                            ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
 //                            client.write(buffer);
