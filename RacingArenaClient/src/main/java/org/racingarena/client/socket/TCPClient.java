@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Logger;
+
+
 
 public class TCPClient{
     private SocketChannel client;
@@ -21,24 +20,29 @@ public class TCPClient{
     private Logger logger;
 
     private Selector selector;
+
+    private GamePlay gamePlay;
     public TCPClient(Logger logger) throws IOException {
         this.logger = logger;
 
         client = SocketChannel.open();
         client.configureBlocking(false);
         client.connect(new InetSocketAddress(InetAddress.getByName("localhost"), ConstantVariable.PORT));
-
         this.logger.info("Client connected to server on port " + ConstantVariable.PORT);
 
-        Scanner scanner = new Scanner(System.in);
+        gamePlay = new GamePlay(logger);
     }
 
+//    This function is used to demonstrate the functionality of the client
     public void run() {
 
         try {
             this.selector = Selector.open();
             int operations = SelectionKey.OP_CONNECT | SelectionKey.OP_READ | SelectionKey.OP_WRITE;
+//            int operations = SelectionKey.OP_READ;
+
             client.register(selector, operations);
+
             while (true) {
                 if (selector.select() > 0) {
                     boolean doneStatus = processReadySet(selector.selectedKeys());
@@ -56,6 +60,8 @@ public class TCPClient{
 
     }
 
+
+
     private boolean processReadySet (Set readySet) throws Exception {
         Iterator iterator = readySet.iterator();
         while (iterator.hasNext()) {
@@ -70,11 +76,26 @@ public class TCPClient{
             if (key.isReadable()) {
                 JSONObject msg = processRead(key);
                 System.out.println("[Server]: " + msg);
+                if (!gamePlay.isRegistered()){
+                    continue;
+                }
+//                switch (msg.getString("status")) {
+//                    case "CLIENT_READY"
+//                }
             }
             if (key.isWritable()) {
-                System.out.println("Enter username: (bye -> exit)");
-                Scanner scanner = new Scanner(System.in);
-                String username = scanner.nextLine();
+                if (!gamePlay.isRegistered()){
+                    System.out.println("Enter username: (bye -> exit)");
+                    Scanner scanner = new Scanner(System.in);
+                    String username = scanner.nextLine();
+                    this.handleRegister(username);
+                    gamePlay.setRegistered(true);
+                    continue;
+                }
+
+
+
+
 
 
                 if (username.equalsIgnoreCase("bye")) {
@@ -82,11 +103,6 @@ public class TCPClient{
                     return true; // Exit
                 }
 
-//                JSONObject obj = new JSONObject();
-//                obj.put("status", Status.SERVER_MESSAGE);
-//                obj.put("message", username);
-//                this.send(obj);
-                this.handleRegister(username);
             }
         }
         return false; // Not done yet

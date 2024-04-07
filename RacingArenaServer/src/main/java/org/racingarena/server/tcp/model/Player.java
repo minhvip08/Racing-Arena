@@ -7,13 +7,14 @@ import java.time.Instant;
 
 public class Player {
     private SelectionKey key;
-    private String name;
+    private String name ="";
     private int score;
     private SocketChannel client;
     private boolean isReady;
     private boolean isRegistered;
     private boolean isEliminated;
     private Instant timestamp;
+    private Integer answer;
     public Player(SelectionKey key, String name) {
         this.key = key;
         this.name = name;
@@ -40,9 +41,9 @@ public class Player {
     public Boolean writeTheBuffer(String message) {
 
         try {
-            if (!this.client.socket().isClosed()) {
-                return false;
-            }
+//            if (!this.client.socket().isClosed()) {
+//                return false;
+//            }
             ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
             this.client.write(buffer);
             return true;
@@ -51,6 +52,18 @@ public class Player {
         }
     }
 
+    public void reset() {
+        this.isReady = false;
+        this.isRegistered = false;
+        this.isEliminated = false;
+        this.timestamp = Instant.now();
+        this.answer = null;
+    }
+
+    public void resetRound() {
+        this.answer = null;
+        this.timestamp = null;
+    }
     public void closeTheClient() {
         try {
             this.client.close();
@@ -121,5 +134,13 @@ public class Player {
 
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Integer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(int answer) {
+        this.answer = answer;
     }
 }

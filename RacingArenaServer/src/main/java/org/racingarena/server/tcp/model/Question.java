@@ -30,6 +30,11 @@ public class Question {
 
     }
 
+    public int getAnswer() {
+        return this.result;
+
+    }
+
     private void setResult() {
         switch (this.operator) {
             case '+':
