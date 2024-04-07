@@ -2,19 +2,20 @@ package org.racingarena.client.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import org.lwjgl.opengl.GL20;
+import com.badlogic.gdx.utils.Align;
 import org.racingarena.client.game.RacingArena;
 
 public class RegistrationScreen implements Screen {
     final RacingArena game;
-    private Stage stage;
-    private TextField usernameField;
+    final Stage stage;
+    final TextField usernameField;
+
+    final Skin skin;
 
     public RegistrationScreen(final RacingArena game) {
         this.game = game;
@@ -22,24 +23,32 @@ public class RegistrationScreen implements Screen {
         this.stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        Skin skin = new Skin(Gdx.files.internal("Skin/glassy/skin/glassy-ui.json"));
+        skin = new Skin(Gdx.files.internal("orangepeelui/uiskin.json"));
 
+        Table rootTable = new Table(skin);
+        rootTable.setFillParent(true);
+        stage.addActor(rootTable);
+
+        Label label = new Label("Racing Arena", skin, "title");
+        label.setAlignment(Align.top);
+        rootTable.add(label).colspan(2).growX();
+
+        rootTable.row();
+        usernameField = new TextField("", skin);
+        usernameField.setSize(300, 40);
+        usernameField.setAlignment(Align.center);
+        rootTable.add(usernameField).width(300).colspan(1).growX();;
+
+        rootTable.row();
         TextButton btnReg = new TextButton("Register", skin);
-        btnReg.setPosition((Gdx.graphics.getWidth() / 2f) - 150, (Gdx.graphics.getHeight() / 2f) - 60);
-        btnReg.setSize(300, 60);
+        btnReg.setSize(150, 60);
         btnReg.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 registerButtonClicked();
             }
         });
-
-        usernameField = new TextField("", skin);
-        usernameField.setPosition((Gdx.graphics.getWidth() / 2f) - 150, (Gdx.graphics.getHeight() / 2f) + 30);
-        usernameField.setSize(300, 40);
-
-        stage.addActor(usernameField);
-        stage.addActor(btnReg);
+        rootTable.add(btnReg).width(150).colspan(1).padTop(10.0f).growX();
     }
 
     private void registerButtonClicked() {
@@ -61,9 +70,10 @@ public class RegistrationScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
+
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
 
@@ -86,7 +96,7 @@ public class RegistrationScreen implements Screen {
 
     @Override
     public void dispose() {
-        game.dispose();
         stage.dispose();
+        skin.dispose();
     }
 }
