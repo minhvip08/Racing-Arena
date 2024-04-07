@@ -9,7 +9,8 @@ public class RacingArena extends Game {
     public void create() {
         batch = new SpriteBatch();
         // Add registration screen when it is ready. For now, opening the game screen first.
-        // this.setScreen(new RegistrationScreen(this));
+        //this.setScreen(new RegistrationScreen(this));
+        //this.setScreen(new TempScreen(this));
         this.setScreen(new GameScreen(this));
     }
 
