@@ -1,5 +1,7 @@
 package org.racingarena.client.socket;
 
+import org.racingarena.client.socket.model.Client;
+
 import java.util.logging.Logger;
 
 public class AppSocketClient {
@@ -8,7 +10,7 @@ public class AppSocketClient {
         Logger logger = Logger.getLogger("root");
         logger.info("Client started");
         try {
-            TCPClient client = new TCPClient(logger);
+            Client client = new Client(logger);
             client.run();
         } catch (Exception e) {
             logger.severe("Error: " + e.getMessage());

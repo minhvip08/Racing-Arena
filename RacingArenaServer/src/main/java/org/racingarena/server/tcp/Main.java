@@ -1,5 +1,7 @@
 package org.racingarena.server.tcp;
 
+import org.racingarena.server.tcp.controller.TCPServer;
+
 import java.util.logging.Logger;
 
 public class Main {
@@ -8,7 +10,7 @@ public class Main {
         logger.info("Server started");
         try {
             TCPServer server = new TCPServer(logger);
-            server.start();
+            server.run();
         } catch (Exception e) {
             logger.severe("Error: " + e.getMessage());
         }

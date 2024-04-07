@@ -1,6 +1,9 @@
-package org.racingarena.client.socket;
+package org.racingarena.client.socket.model;
 
 import org.json.JSONObject;
+import org.racingarena.client.socket.ConstantVariable;
+import org.racingarena.client.socket.GamePlay;
+import org.racingarena.client.socket.Status;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -14,7 +17,7 @@ import java.util.logging.Logger;
 
 
 
-public class TCPClient{
+public class Client {
     private SocketChannel client;
     private String username;
     private Logger logger;
@@ -22,7 +25,7 @@ public class TCPClient{
     private Selector selector;
 
     private GamePlay gamePlay;
-    public TCPClient(Logger logger) throws IOException {
+    public Client(Logger logger) throws IOException {
         this.logger = logger;
 
         client = SocketChannel.open();
@@ -76,12 +79,19 @@ public class TCPClient{
             if (key.isReadable()) {
                 JSONObject msg = processRead(key);
                 System.out.println("[Server]: " + msg);
+                if (msg == null) {
+                    this.handleClose();
+                    return true;
+                }
                 if (!gamePlay.isRegistered()){
                     continue;
                 }
-//                switch (msg.getString("status")) {
-//                    case "CLIENT_READY"
-//                }
+                switch (msg.getString("status")) {
+                    case Status.CLIENT_QUESTION:
+                        handleAnswer();
+                        break;
+
+                }
             }
             if (key.isWritable()) {
                 if (!gamePlay.isRegistered()){
@@ -116,6 +126,17 @@ public class TCPClient{
         return true;
     }
 
+    public void handleAnswer() {
+        System.out.println("Enter your answer: ");
+        Scanner scanner = new Scanner(System.in);
+        int answer = scanner.nextInt();
+        JSONObject obj = new JSONObject();
+        obj.put("status", Status.SERVER_ANSWER);
+        obj.put("answer", answer);
+        obj.put("message", "Answer received");
+        logger.info("Sending answer: " + answer);
+        this.send(obj);
+    }
     public boolean handleRegister(String username) {
         this.username = username;
         JSONObject obj = new JSONObject();

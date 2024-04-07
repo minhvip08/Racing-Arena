@@ -41,9 +41,9 @@ public class Player {
     public Boolean writeTheBuffer(String message) {
 
         try {
-//            if (!this.client.socket().isClosed()) {
-//                return false;
-//            }
+            if (this.client.socket().isClosed()) {
+                return false;
+            }
             ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
             this.client.write(buffer);
             return true;
@@ -56,7 +56,7 @@ public class Player {
         this.isReady = false;
         this.isRegistered = false;
         this.isEliminated = false;
-        this.timestamp = Instant.now();
+        this.timestamp = null;
         this.answer = null;
     }
 

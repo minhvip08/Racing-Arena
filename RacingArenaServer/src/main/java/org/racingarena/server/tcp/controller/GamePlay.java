@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class GamePlay extends Thread {
     private final int MAX_ROUND = 2;
     private final int MAX_FALIED = 3;
-    private final int MAX_TIME = 2;
+    private final int MAX_TIME = 10;
     private Logger logger;
     private WaitingRoom waitingRoom;
 
@@ -73,11 +73,9 @@ public class GamePlay extends Thread {
 
     public void checkAnswer(Question question) {
         int incorrect = 0;
-        Player fastestPlayer =null;
-        for (Player player : waitingRoom.getSortedPlayersByTimestamp()) {
-            if (fastestPlayer == null) {
-                fastestPlayer = player;
-            }
+
+        for (Player player : waitingRoom.getReadyPlayers()) {
+
             JSONObject response = new JSONObject();
             if (player.getAnswer() == null || player.getAnswer() != question.getAnswer()) {
                 incorrect++;
@@ -93,12 +91,14 @@ public class GamePlay extends Thread {
             }
 
 
-//            Bonus point for fastest player
-            if (fastestPlayer.getAnswer() != null && fastestPlayer.getAnswer() == question.getAnswer()){
-                fastestPlayer.setScore(fastestPlayer.getScore() + incorrect);
-            }
 
         }
+        //            Bonus point for fastest player
+        Player fastestPlayer = waitingRoom.getFastestPlayer();
+        if (fastestPlayer!= null && fastestPlayer.getAnswer() != null && fastestPlayer.getAnswer() == question.getAnswer()){
+            fastestPlayer.setScore(fastestPlayer.getScore() + incorrect);
+        }
+
     }
 
     public void resetRound() {

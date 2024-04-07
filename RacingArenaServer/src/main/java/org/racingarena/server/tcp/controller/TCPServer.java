@@ -1,7 +1,9 @@
-package org.racingarena.server.tcp;
+package org.racingarena.server.tcp.controller;
 
 import netscape.javascript.JSObject;
 import org.json.JSONObject;
+import org.racingarena.server.tcp.ConstantVariable;
+import org.racingarena.server.tcp.Status;
 import org.racingarena.server.tcp.controller.GamePlay;
 import org.racingarena.server.tcp.model.Player;
 import org.racingarena.server.tcp.model.WaitingRoom;
@@ -21,7 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class TCPServer extends Thread {
+public class TCPServer {
     private final Selector selector;
     private final ServerSocketChannel serverSocketChannel;
     private final Logger logger;
@@ -44,7 +46,6 @@ public class TCPServer extends Thread {
         this.gamePlay = new GamePlay(logger, waitingRoom);
     }
 
-    @Override
     public void run() {
         this.logger.info("Server started on port " + ConstantVariable.PORT);
         this.gamePlay.start();
@@ -134,6 +135,7 @@ public class TCPServer extends Thread {
 //            Set name for player
             this.waitingRoom.getPlayers().get(key).setName(reqJSON.getString("username"));
             this.waitingRoom.getPlayerByName(reqJSON.getString("username")).setRegistered(true);
+            this.logger.info("Player " + reqJSON.getString("username") + " registered");
 
 //            Send response to client
             JSONObject obj = new JSONObject();

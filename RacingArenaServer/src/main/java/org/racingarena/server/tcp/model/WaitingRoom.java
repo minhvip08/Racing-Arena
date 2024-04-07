@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class WaitingRoom {
-    public static int MAX_PLAYER = 1;
+    public static int MAX_PLAYER = 2;
     public volatile Map<SelectionKey, Player> players;
     public volatile Logger logger;
 
@@ -22,12 +22,21 @@ public class WaitingRoom {
     }
 
     public synchronized Boolean addPlayer(Player player) {
-        if (isFull() || players.containsValue(player)) {
+        if (players.containsValue(player)) {
             logger.info("Player " + player.getName() + " cannot join the waiting room");
             return false;
         }
 
-        logger.info("Player " + player.getName() + " joined the waiting room");
+        if (isFull()){
+            logger.info("Player " + player.getName() + " cannot join the waiting room");
+//            delete the player
+            player.closeTheClient();
+
+            return false;
+        }
+
+
+        logger.info("One Client joined the waiting room");
         players.put(player.getKey(), player);
         return true;
     }
@@ -64,18 +73,29 @@ public class WaitingRoom {
     public synchronized Player getHighestScorePlayer() {
         Player highestScorePlayer = null;
         for (Player player : players.values()) {
-            if (highestScorePlayer == null || player.getScore() > highestScorePlayer.getScore()) {
+            if (highestScorePlayer == null || !player.isEliminated() || player.getScore() > highestScorePlayer.getScore()) {
                 highestScorePlayer = player;
             }
         }
         return highestScorePlayer;
     }
 
-//    Get all players who are registered and not eliminated, sorted by timestamp
-    public synchronized List<Player> getSortedPlayersByTimestamp() {
-        List<Player> sortedPlayers = new ArrayList<>(getReadyPlayers());
-        sortedPlayers.sort(Comparator.comparing(Player::getTimestamp));
-        return sortedPlayers;
+////    Get all players who are registered and not eliminated, sorted by timestamp
+//    public synchronized List<Player> getSortedPlayersByTimestamp() {
+//        List<Player> sortedPlayers = new ArrayList<>(getReadyPlayers());
+////        sort for timestamp, if timestamp is the same, sort by name
+//        sortedPlayers.sort(Comparator.comparing(Player::getTimestamp).thenComparing(Player::getName));
+//        return sortedPlayers;
+//    }
+
+    public synchronized Player getFastestPlayer() {
+        Player lowestTimestampPlayer = null;
+        for (Player player : players.values()) {
+            if (lowestTimestampPlayer == null || player.getTimestamp() != null || player.getTimestamp().isBefore(lowestTimestampPlayer.getTimestamp())) {
+                lowestTimestampPlayer = player;
+            }
+        }
+        return lowestTimestampPlayer;
     }
 
 // Get all players who are registered and not eliminated
