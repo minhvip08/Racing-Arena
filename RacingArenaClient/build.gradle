@@ -1,15 +1,19 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'org.graalvm.buildtools.native' version '0.10.1'
 }
 
+def osName = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+
 group = 'org.racingarena.client'
-version = "1.0"
+version = '1.0'
 //Defines 'extra' (custom) properties for all projects
 ext {
     appName = "Racing Arena"
     //Versions of the libGDX dependencies (used further below on those 'compile' lines)
     gdxVersion = '1.12.1'
+    gdxSvmHelperVersion = '2.0.1'
 }
 
 idea {
@@ -26,7 +30,21 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
 
+graalvmNative {
+    binaries {
+        main {
+            mainClass = 'org.racingarena.client.Main'
+            buildArgs.add('-H:IncludeResources=\".*/*.png\"')
+            if (osName.contains('windows')) {
+                buildArgs.addAll(
+                        '-H:NativeLinkerOption=/SUBSYSTEM:WINDOWS',
+                        '-H:NativeLinkerOption=/ENTRY:mainCRTStartup'
+                )
+            }
+        }
+    }
 }
 
 repositories {
@@ -40,12 +58,7 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-
-    // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20240303'
-
-}
-
-test {
-    useJUnitPlatform()
+    implementation "io.github.berstanio:gdx-svmhelper:$gdxSvmHelperVersion"
+    implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$gdxSvmHelperVersion"
 }
