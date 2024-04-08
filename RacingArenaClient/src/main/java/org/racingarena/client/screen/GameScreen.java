@@ -3,15 +3,22 @@ package org.racingarena.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
+import org.racingarena.client.object.Calculation;
+
+import java.util.ArrayList;
 
 public class GameScreen implements Screen {
     final RacingArena game;
@@ -33,6 +40,30 @@ public class GameScreen implements Screen {
     private int playerCount = 5;
     // simulate the state of player
     private PlayerState playerState = PlayerState.RACING;
+    final Stage stage;
+    final Skin skin;
+    final TextField answer;
+    private int timer;
+    private float timeSeconds = 0f;
+    private float period = 1f;
+    Label timerLabel;
+    Calculation calculation;
+    Label calculationLabel;
+
+    java.util.List<String> Messages = new ArrayList<String>() {{
+        add("Supplier 1");
+        add("Supplier 2");
+        add("Supplier 3");
+        add("Supplier 1");
+        add("Supplier 2");
+        add("Supplier 3");
+        add("Supplier 1");
+        add("Supplier 2");
+        add("Supplier 3");
+        add("Supplier 1");
+        add("Supplier 2");
+        add("Supplier 3");
+    }};
     public GameScreen(final RacingArena game) {
         this.game = game;
         carT = new Texture(Gdx.files.classpath("textures/cars.png"));
@@ -56,6 +87,65 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(Property.WIDTH, Property.HEIGHT, camera);
+
+        this.stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
+        skin = new Skin(Gdx.files.internal("orangepeelui/uiskin.json"));
+
+        calculation = new Calculation();
+
+        timer = 10;
+
+        timerLabel =  new Label(Integer.toString(timer), skin, "title");
+
+        Table rootTable = new Table(skin);
+        rootTable.setFillParent(true);
+        rootTable.bottom();
+        stage.addActor(rootTable);
+
+        Table panelTable = new Table();
+        panelTable.defaults().growX().fillY();
+        Table table = new Table(skin);
+        Label label = new Label("Your Calculation", skin, "title");
+        table.background("panel-orange");
+        table.add(label).colspan(2).padBottom(20);
+        table.row();
+        calculation.newCalculation();
+        calculationLabel = new Label(calculation.getCalculation(), skin, "title");
+        table.add(calculationLabel);
+        panelTable.add(table);
+        answer = new TextField("", skin);
+        answer.setSize(150, 40);
+        answer.setAlignment(Align.center);
+        table.add(answer).width(150);
+
+        table = new Table(skin);
+        table.background("panel-orange");
+        label = new Label("Countdown", skin, "title");
+        table.background("panel-orange");
+        table.add(label).padBottom(20);
+        table.row();
+        table.add(timerLabel);
+        panelTable.add(table);
+
+        table = new Table(skin);
+        label = new Label("Messeages", skin, "title");
+        table.background("panel-orange");
+        table.add(label);
+
+        table.row();
+        Table subTable = new Table();
+        for (String message : Messages) {
+            subTable.row();
+            subTable.add(new Label(message, skin));
+        }
+        ScrollPane scrollPane = new ScrollPane(subTable, skin, "android-no-bg");
+        scrollPane.setFlickScroll(false);
+        scrollPane.setFadeScrollBars(false);
+        table.add(scrollPane).grow();
+        panelTable.add(table);
+        rootTable.add(panelTable).maxHeight(100.0f).width(Property.WIDTH);
     }
 
     @Override
@@ -65,7 +155,22 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float v) {
-        ScreenUtils.clear(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        timeSeconds += v;
+        if (timeSeconds > period){
+            timeSeconds-=period;
+            timer--;
+            if (timer < 0){
+                timer = 10;
+                calculation.newCalculation();
+                calculationLabel.setText(calculation.getCalculation());
+            }
+            timerLabel.setText(Integer.toString(timer));
+        }
+        stage.act(v);
+        stage.draw();
+        //ScreenUtils.clear(0, 0, 0, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
@@ -144,6 +249,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        stage.dispose();
         carT.dispose();
         carGreyT.dispose();
         roadT.dispose();
