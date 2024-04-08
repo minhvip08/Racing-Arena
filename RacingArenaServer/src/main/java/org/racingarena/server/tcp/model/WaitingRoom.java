@@ -58,7 +58,10 @@ public class WaitingRoom {
 
     public synchronized void broadcast(String message) {
         for (Player player : players.values()) {
-            player.writeTheBuffer(message);
+            if (player.isRegistered())
+            {
+                player.writeTheBuffer(message);
+            }
         }
     }
 
