@@ -82,7 +82,7 @@ public class TCPServer {
         client.configureBlocking(false);
         SelectionKey selectionKey = client.register(selector, SelectionKey.OP_READ);
         logger.info("Client connected: " + client.getRemoteAddress());
-//                        Add player's selection key to waiting room
+//      Add player's selection key to waiting room
         Player player = new Player(selectionKey,"");
         this.waitingRoom.addPlayer(player);
     }

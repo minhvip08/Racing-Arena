@@ -17,35 +17,27 @@ import java.util.logging.Logger;
 
 
 
-public class Client {
-    private SocketChannel client;
-    private String username;
-    private Logger logger;
+public class Client implements Runnable {
+    private final SocketChannel client;
+    private final Logger logger;
+    private final GamePlay gamePlay;
 
-    private Selector selector;
-
-    private GamePlay gamePlay;
-    public Client(Logger logger) throws IOException {
+    public Client(Logger logger, GamePlay gamePlay) throws IOException {
         this.logger = logger;
-
+        this.gamePlay = gamePlay;
         client = SocketChannel.open();
         client.configureBlocking(false);
         client.connect(new InetSocketAddress(InetAddress.getByName("localhost"), ConstantVariable.PORT));
         this.logger.info("Client connected to server on port " + ConstantVariable.PORT);
-
-        gamePlay = new GamePlay(logger);
     }
 
 //    This function is used to demonstrate the functionality of the client
+    @Override
     public void run() {
-
         try {
-            this.selector = Selector.open();
+            Selector selector = Selector.open();
             int operations = SelectionKey.OP_CONNECT | SelectionKey.OP_READ | SelectionKey.OP_WRITE;
-//            int operations = SelectionKey.OP_READ;
-
             client.register(selector, operations);
-
             while (true) {
                 if (selector.select() > 0) {
                     boolean doneStatus = processReadySet(selector.selectedKeys());
@@ -54,13 +46,9 @@ public class Client {
                     }
                 }
             }
-
-
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
-
-
     }
 
 
@@ -83,18 +71,21 @@ public class Client {
                     this.handleClose();
                     return true;
                 }
-                if (!gamePlay.isRegistered()){
+                if (!gamePlay.getRegistered()) {
+                    switch (msg.getString("status")) {
+                        case Status.CLIENT_REGISTER:
+                            gamePlay.setRegistered(true);
+                            break;
+                        case Status.CLIENT_REGISTER_AGAIN:
+                            System.out.println("Username already exists. Enter username: (bye -> exit)");
+                            gamePlay.setUsername(null);
+                            break;
+                    }
                     continue;
                 }
                 switch (msg.getString("status")) {
                     case Status.CLIENT_QUESTION:
                         handleAnswer();
-                        break;
-                    case Status.CLIENT_REGISTER_AGAIN:
-                        System.out.println("Username already exists. Enter username: (bye -> exit)");
-                        Scanner scanner = new Scanner(System.in);
-                        String username = scanner.nextLine();
-                        this.handleRegister(username);
                         break;
                     case Status.CLIENT_END_GAME:
                         System.out.println("Game ended");
@@ -102,25 +93,11 @@ public class Client {
                 }
             }
             if (key.isWritable()) {
-                if (!gamePlay.isRegistered()){
+                if (gamePlay.getUsername() != null) {
                     System.out.println("Enter username: (bye -> exit)");
-                    Scanner scanner = new Scanner(System.in);
-                    String username = scanner.nextLine();
-                    this.handleRegister(username);
-                    gamePlay.setRegistered(true);
-                    continue;
+                    this.handleRegister(gamePlay.getUsername());
+                    gamePlay.setUsername(null);
                 }
-
-
-
-
-
-
-                if (username.equalsIgnoreCase("bye")) {
-                    this.client.close();
-                    return true; // Exit
-                }
-
             }
         }
         return false; // Not done yet
@@ -145,25 +122,13 @@ public class Client {
         logger.info("Sending answer: " + answer);
         this.send(obj);
     }
+
     public boolean handleRegister(String username) {
-        this.username = username;
         JSONObject obj = new JSONObject();
         obj.put("status", Status.SERVER_REGISTER);
         obj.put("username", username);
         this.send(obj);
         return true;
-//        JSONObject response = this.sendRequest(obj);
-//        if (response == null) {
-//            return false;
-//        }
-//        boolean status = response.getBoolean("status");
-//        if (status) {
-//            logger.info("Registered successfully");
-//            return true;
-//        } else {
-//            logger.info("Username already exists");
-//            return false;
-//        }
     }
 
     public JSONObject sendRequest(JSONObject obj) {
@@ -202,7 +167,7 @@ public class Client {
         this.client.close();
     }
 
-    public  JSONObject processRead(SelectionKey key) throws Exception {
+    public JSONObject processRead(SelectionKey key) throws Exception {
         SocketChannel sChannel = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         int bytesCount = sChannel.read(buffer);

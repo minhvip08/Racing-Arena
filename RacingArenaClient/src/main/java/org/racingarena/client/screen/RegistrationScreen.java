@@ -23,7 +23,7 @@ public class RegistrationScreen implements Screen {
         this.stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("orangepeelui/uiskin.json"));
+        skin = new Skin(Gdx.files.classpath("orangepeelui/uiskin.json"));
 
         Table rootTable = new Table(skin);
         rootTable.setFillParent(true);
@@ -48,16 +48,13 @@ public class RegistrationScreen implements Screen {
                 registerButtonClicked();
             }
         });
+
         rootTable.add(btnReg).width(150).colspan(1).padTop(10.0f).growX();
     }
 
     private void registerButtonClicked() {
-        String username = usernameField.getText().trim();
-        if (isValidNickname(username)) {
-            Gdx.app.log("Registration", "Username: " + username);
-        } else {
-            Gdx.app.log("Registration", "Invalid username format");
-        }
+        String username = usernameField.getText();
+        this.game.gamePlay.setUsername(username);
     }
 
     private boolean isValidNickname(String nickname) {
@@ -70,12 +67,16 @@ public class RegistrationScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (game.gamePlay.getRegistered()) {
+            game.setScreen(new GameScreen(game));
+        }
         Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
+
+
 
     @Override
     public void resize(int width, int height) {

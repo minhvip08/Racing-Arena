@@ -1,22 +1,28 @@
 package org.racingarena.client.socket;
 
-import java.util.logging.Logger;
+public class GamePlay {
+    private boolean registered;
+    private String username;
 
-public class GamePlay extends Thread{
-    private boolean isRegistered = false;
-    private Logger logger;
 
-    public GamePlay(Logger logger) {
-        this.logger = logger;
+    public synchronized String getUsername() {
+        return username;
     }
 
-    public boolean isRegistered() {
-        return isRegistered;
+    public synchronized void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setRegistered(boolean registered) {
-        isRegistered = registered;
+    public synchronized boolean getRegistered() {
+        return registered;
     }
 
+    public synchronized void setRegistered(boolean registered) {
+        this.registered = registered;
+    }
 
+    public GamePlay() {
+        this.username = null;
+        this.registered = false;
+    }
 }

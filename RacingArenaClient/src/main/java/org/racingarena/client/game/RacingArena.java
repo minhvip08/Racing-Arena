@@ -1,17 +1,34 @@
 package org.racingarena.client.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.racingarena.client.screen.GameScreen;
+import org.racingarena.client.screen.RegistrationScreen;
+import org.racingarena.client.socket.GamePlay;
+import org.racingarena.client.socket.model.Client;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class RacingArena extends Game {
     public SpriteBatch batch;
+    public GamePlay gamePlay;
+    public Logger logger;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        // Add registration screen when it is ready. For now, opening the game screen first.
-        //this.setScreen(new RegistrationScreen(this));
-        //this.setScreen(new TempScreen(this));
-        this.setScreen(new GameScreen(this));
+        gamePlay = new GamePlay();
+        logger = Logger.getLogger("root");
+        try {
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            executor.execute(new Client(logger, gamePlay));
+            executor.shutdown();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            //System.exit(0);
+        }
+        this.setScreen(new RegistrationScreen(this));
     }
 
     @Override

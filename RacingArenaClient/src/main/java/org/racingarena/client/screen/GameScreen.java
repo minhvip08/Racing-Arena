@@ -13,14 +13,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
 import org.racingarena.client.object.Calculation;
-
-import java.util.ArrayList;
 
 public class GameScreen implements Screen {
     final RacingArena game;
@@ -80,7 +77,7 @@ public class GameScreen implements Screen {
         this.stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("orangepeelui/uiskin.json"));
+        skin = new Skin(Gdx.files.classpath("orangepeelui/uiskin.json"));
 
         calculation = new Calculation();
 
