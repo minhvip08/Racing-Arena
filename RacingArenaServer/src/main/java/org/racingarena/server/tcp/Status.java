@@ -23,4 +23,5 @@ public class Status {
     public static final String CLIENT_REGISTER_AGAIN = "CLIENT_REGISTER_AGAIN" ;
 
 //    public static final String CLIENT_ANSWER = "CLIENT_ANSWER";
+    public static final String CLIENT_PLAYER_STATUS = "CLIENT_PLAYERS_STATUS";
 }

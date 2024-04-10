@@ -54,6 +54,7 @@ public class GamePlay extends Thread {
             }
 
             checkAnswer(currentQuestion);
+            sendPlayersStatus();
             resetRound();
 
 
@@ -80,13 +81,18 @@ public class GamePlay extends Thread {
             if (player.getAnswer() == null || player.getAnswer() != question.getAnswer()) {
                 incorrect++;
                 player.setScore(player.getScore() - 1);
+                player.incrementLosingStreak();
+                player.checkLosingStreak();
                 response.put("status", Status.CLIENT_INCORRECT);
                 response.put("message", "Incorrect answer");
+                response.put("isEliminated", player.isEliminated());
                 player.writeTheBuffer(response.toString());
             } else {
                 player.setScore(player.getScore() + 1);
+                player.resetLosingStreak();
                 response.put("status", Status.CLIENT_CORRECT);
                 response.put("message", "Correct answer");
+                response.put("isEliminated", player.isEliminated());
                 player.writeTheBuffer(response.toString());
             }
 
@@ -121,5 +127,22 @@ public class GamePlay extends Thread {
 
         waitingRoom.broadcastEndGame(response);
         resetGame();
+    }
+
+    public void sendPlayersStatus(){
+        JSONObject response = new JSONObject();
+        response.put("status", Status.CLIENT_PLAYER_STATUS);
+        response.put("message", "Players status");
+        JSONObject players = new JSONObject();
+        for (Player player : waitingRoom.getReadyPlayers()) {
+            JSONObject playerObj = new JSONObject();
+            playerObj.put("name", player.getName());
+            playerObj.put("score", player.getScore());
+            players.put(player.getName(), playerObj);
+        }
+
+        response.put("players", players);
+        waitingRoom.broadcastRegistered(response.toString());
+
     }
 }

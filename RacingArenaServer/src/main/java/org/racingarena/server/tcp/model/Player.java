@@ -6,6 +6,7 @@ import java.nio.channels.SocketChannel;
 import java.time.Instant;
 
 public class Player {
+    public static final int LOSING_STREAK_LIMIT = 3;
     private SelectionKey key;
     private String name ="";
     private int score;
@@ -15,11 +16,26 @@ public class Player {
     private boolean isEliminated;
     private Instant timestamp;
     private Integer answer;
+    private Integer losingStreak = 0;
 
     public Player(SelectionKey key, String name) {
         this.key = key;
         this.name = name;
         this.client = (SocketChannel) key.channel();
+    }
+
+    public void checkLosingStreak() {
+        if (losingStreak >= LOSING_STREAK_LIMIT) {
+            this.isEliminated = true;
+        }
+    }
+
+    public void incrementLosingStreak() {
+        losingStreak++;
+    }
+
+    public void resetLosingStreak() {
+        losingStreak = 0;
     }
 
     public String readTheBuffer() {
