@@ -4,6 +4,12 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
+import org.racingarena.client.socket.model.Client;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class Main {
     public static void main(String[] args) {

@@ -36,7 +36,7 @@ graalvmNative {
     binaries {
         main {
             mainClass = 'org.racingarena.client.Main'
-            buildArgs.add('-H:IncludeResources=\".*/*.png\"')
+            buildArgs.add('-H:IncludeResources=\".*/*.fnt|.*/*.png|.*/*.atlas|.*/*.json\"')
             if (osName.contains('windows')) {
                 buildArgs.addAll(
                         '-H:NativeLinkerOption=/SUBSYSTEM:WINDOWS',
