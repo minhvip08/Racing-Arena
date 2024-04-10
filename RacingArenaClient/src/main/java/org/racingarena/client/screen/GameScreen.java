@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -43,27 +45,14 @@ public class GameScreen implements Screen {
     final Stage stage;
     final Skin skin;
     final TextField answer;
-    private int timer;
     private float timeSeconds = 0f;
     private float period = 1f;
+    private int timer = Property.TIMER;
     Label timerLabel;
     Calculation calculation;
     Label calculationLabel;
-
-    java.util.List<String> Messages = new ArrayList<String>() {{
-        add("Supplier 1");
-        add("Supplier 2");
-        add("Supplier 3");
-        add("Supplier 1");
-        add("Supplier 2");
-        add("Supplier 3");
-        add("Supplier 1");
-        add("Supplier 2");
-        add("Supplier 3");
-        add("Supplier 1");
-        add("Supplier 2");
-        add("Supplier 3");
-    }};
+    String Messages = "Enter your answer";
+    Label messageLabel;
     public GameScreen(final RacingArena game) {
         this.game = game;
         carT = new Texture(Gdx.files.classpath("textures/cars.png"));
@@ -95,9 +84,7 @@ public class GameScreen implements Screen {
 
         calculation = new Calculation();
 
-        timer = 10;
-
-        timerLabel =  new Label(Integer.toString(timer), skin, "title");
+        timerLabel =  new Label(Integer.toString(Property.TIMER), skin, "title");
 
         Table rootTable = new Table(skin);
         rootTable.setFillParent(true);
@@ -109,7 +96,7 @@ public class GameScreen implements Screen {
         Table table = new Table(skin);
         Label label = new Label("Your Calculation", skin, "title");
         table.background("panel-orange");
-        table.add(label).colspan(2).padBottom(20);
+        table.add(label).colspan(2).padTop(10.0f);
         table.row();
         calculation.newCalculation();
         calculationLabel = new Label(calculation.getCalculation(), skin, "title");
@@ -119,33 +106,49 @@ public class GameScreen implements Screen {
         answer.setSize(150, 40);
         answer.setAlignment(Align.center);
         table.add(answer).width(150);
+        table.row();
+        TextButton btnReg = new TextButton("Submit", skin);
+        btnReg.setSize(100, 20);
+        btnReg.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                submitButtonClicked();
+            }
+        });
+        table.add(btnReg).width(100).colspan(2).padTop(10.0f).growX();
 
         table = new Table(skin);
         table.background("panel-orange");
         label = new Label("Countdown", skin, "title");
         table.background("panel-orange");
-        table.add(label).padBottom(20);
+        table.add(label);
         table.row();
         table.add(timerLabel);
         panelTable.add(table);
 
         table = new Table(skin);
-        label = new Label("Messeages", skin, "title");
+        label = new Label("Message", skin, "title");
         table.background("panel-orange");
         table.add(label);
 
         table.row();
-        Table subTable = new Table();
-        for (String message : Messages) {
-            subTable.row();
-            subTable.add(new Label(message, skin));
-        }
-        ScrollPane scrollPane = new ScrollPane(subTable, skin, "android-no-bg");
-        scrollPane.setFlickScroll(false);
-        scrollPane.setFadeScrollBars(false);
-        table.add(scrollPane).grow();
-        panelTable.add(table);
+        messageLabel =  new Label(Messages, skin);
+        table.add(messageLabel);
+        panelTable.add(table).growY();
         rootTable.add(panelTable).maxHeight(100.0f).width(Property.WIDTH);
+    }
+
+    private void submitButtonClicked() {
+        try{
+            String Answer = answer.getText().trim();
+            if (calculation.checkAnswer(Integer.parseInt(Answer))) {
+                Messages = "Your answer is correct";
+            } else {
+                Messages = "Your answer is wrong";
+            }
+        } catch (NumberFormatException e){
+
+        }
     }
 
     @Override
@@ -155,19 +158,21 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float v) {
-        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         timeSeconds += v;
         if (timeSeconds > period){
             timeSeconds-=period;
             timer--;
             if (timer < 0){
-                timer = 10;
+                timer = Property.TIMER;
                 calculation.newCalculation();
                 calculationLabel.setText(calculation.getCalculation());
+                Messages = Integer.toString(calculation.getAnswer());
             }
             timerLabel.setText(Integer.toString(timer));
         }
+        messageLabel.setText(Messages);
         stage.act(v);
         stage.draw();
         //ScreenUtils.clear(0, 0, 0, 1);
@@ -228,8 +233,9 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
-        viewport.update(i, i1);
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+        viewport.update(width, height);
     }
 
     @Override

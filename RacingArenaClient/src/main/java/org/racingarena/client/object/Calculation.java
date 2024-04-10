@@ -8,7 +8,7 @@ public class Calculation {
     private int maxInt;
     private int num1;
     private int num2;
-    private double answer;
+    private int answer;
     private char[] operators;
     private char operator;
 
@@ -30,25 +30,33 @@ public class Calculation {
     private void  calculateAnswer() {
         switch (operator) {
             case '+':
-                answer =num1 + num2;
+                answer = num1 + num2;
+                break;
             case '-':
                 answer = num1 - num2;
-            case '*':
+                break;
+            case 'x':
                 answer = num1 * num2;
+                break;
             case '/':
-                answer = (double) num1 / num2;
+                answer = num1 / num2;
+                break;
             case '%':
                 answer = num1 % num2;
+                break;
             default:
                 answer = -1;
         };
     }
 
-    public boolean checkAnswer(double answer){
+    public boolean checkAnswer(int answer){
         return answer == this.answer;
+    }
+    public int getAnswer(){
+        return answer;
     }
 
     public String getCalculation(){
-        return num1 + " " + operator + " " + num2 + " = ";
+        return num1 + " " + operator + " " + num2 + " =";
     }
 }
