@@ -5,6 +5,7 @@ import org.racingarena.client.game.RacingArena;
 
 public class WaitingScreen implements Screen {
     final RacingArena game;
+
     public WaitingScreen(final RacingArena game) {
         this.game = game;
     }

@@ -68,7 +68,7 @@ public class RegistrationScreen implements Screen {
     @Override
     public void render(float delta) {
         if (game.gamePlay.getRegistered()) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new WaitingScreen(game));
         }
         Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
