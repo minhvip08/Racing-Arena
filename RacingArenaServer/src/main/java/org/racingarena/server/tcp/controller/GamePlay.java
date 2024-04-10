@@ -118,7 +118,8 @@ public class GamePlay extends Thread {
         response.put("status", Status.CLIENT_END_GAME);
         response.put("message", "Game is ended");
         response.put("winner", waitingRoom.getHighestScorePlayer().getName());
-        waitingRoom.broadcast(response.toString());
+
+        waitingRoom.broadcastEndGame(response);
         resetGame();
     }
 }

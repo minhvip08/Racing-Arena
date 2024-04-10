@@ -1,5 +1,6 @@
 package org.racingarena.server.tcp.model;
 
+import org.json.JSONObject;
 import org.racingarena.server.tcp.model.Player;
 
 import java.nio.channels.SelectionKey;
@@ -56,15 +57,17 @@ public class WaitingRoom {
         return registeredPlayers;
     }
 
-    public synchronized void broadcast(String message) {
+    public synchronized void broadcastEndGame(JSONObject message) {
         for (Player player : players.values()) {
             if (player.isRegistered())
             {
-                player.writeTheBuffer(message);
+                message.put("score", player.getScore());
+                player.writeTheBuffer(message.toString());
             }
         }
     }
 
+//    broadcast to all players who are registered and not eliminated
     public synchronized void broadcastRegistered(String message) {
         for (Player player : players.values()) {
             if (player.isRegistered() && !player.isEliminated()) {
@@ -93,8 +96,8 @@ public class WaitingRoom {
 
     public synchronized Player getFastestPlayer() {
         Player lowestTimestampPlayer = null;
-        for (Player player : players.values()) {
-            if (lowestTimestampPlayer == null || player.getTimestamp() != null || player.getTimestamp().isBefore(lowestTimestampPlayer.getTimestamp())) {
+        for (Player player : getReadyPlayers()) {
+            if (lowestTimestampPlayer == null || (player.getTimestamp() != null && lowestTimestampPlayer.getTimestamp() != null && player.getTimestamp().isBefore(lowestTimestampPlayer.getTimestamp()))) {
                 lowestTimestampPlayer = player;
             }
         }

@@ -15,6 +15,7 @@ public class Player {
     private boolean isEliminated;
     private Instant timestamp;
     private Integer answer;
+
     public Player(SelectionKey key, String name) {
         this.key = key;
         this.name = name;
@@ -58,6 +59,7 @@ public class Player {
         this.isEliminated = false;
         this.timestamp = null;
         this.answer = null;
+        this.score = 0;
     }
 
     public void resetRound() {

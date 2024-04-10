@@ -90,7 +90,15 @@ public class Client {
                     case Status.CLIENT_QUESTION:
                         handleAnswer();
                         break;
-
+                    case Status.CLIENT_REGISTER_AGAIN:
+                        System.out.println("Username already exists. Enter username: (bye -> exit)");
+                        Scanner scanner = new Scanner(System.in);
+                        String username = scanner.nextLine();
+                        this.handleRegister(username);
+                        break;
+                    case Status.CLIENT_END_GAME:
+                        System.out.println("Game ended");
+                        break;
                 }
             }
             if (key.isWritable()) {

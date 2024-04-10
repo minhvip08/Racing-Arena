@@ -20,6 +20,7 @@ public class Status {
     public static final String CLIENT_CORRECT = "CLIENT_CORRECT";
 
     public static final String CLIENT_END_GAME = "CLIENT_END_GAME";
+    public static final String CLIENT_REGISTER_AGAIN = "CLIENT_REGISTER_AGAIN" ;
 
 //    public static final String CLIENT_ANSWER = "CLIENT_ANSWER";
 }

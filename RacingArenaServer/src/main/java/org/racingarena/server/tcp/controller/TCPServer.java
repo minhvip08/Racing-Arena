@@ -80,10 +80,8 @@ public class TCPServer {
     public void handleAcceptable(SelectionKey key) throws IOException {
         SocketChannel client = serverSocketChannel.accept();
         client.configureBlocking(false);
-
         SelectionKey selectionKey = client.register(selector, SelectionKey.OP_READ);
         logger.info("Client connected: " + client.getRemoteAddress());
-
 //                        Add player's selection key to waiting room
         Player player = new Player(selectionKey,"");
         this.waitingRoom.addPlayer(player);
@@ -102,13 +100,11 @@ public class TCPServer {
             JSONObject obj = new JSONObject(message);
             if (obj.getString("status").equals(Status.SERVER_REGISTER)) {
                 handleRegister(key, obj);
-
             }
 
             if (obj.getString("status").equals(Status.SERVER_SHUTDOWN)) {
                 handleClose(key);
             }
-
             if (obj.getString("status").equals(Status.SERVER_ANSWER)) {
                 logger.info("Message received: " + obj.getString("message"));
                 handleAnswer(key, obj);
@@ -123,6 +119,10 @@ public class TCPServer {
         if (reqJSON.getString("status").equals(Status.SERVER_REGISTER)) {
             if (this.waitingRoom.isPlayerRegistered(reqJSON.getString("username"))) {
                 this.logger.info("Username already exists");
+                JSONObject obj = new JSONObject();
+                obj.put("status", Status.CLIENT_REGISTER_AGAIN);
+                obj.put("message", "Username already exists");
+                sendResponse(key, obj);
                 return;
             }
 //            if (this.waitingRoom.isFull()) {
@@ -145,6 +145,11 @@ public class TCPServer {
             ByteBuffer buffer = ByteBuffer.wrap(obj.toString().getBytes());
             client.write(buffer);
         }
+    }
+    public void sendResponse(SelectionKey key, JSONObject obj) throws IOException {
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.wrap(obj.toString().getBytes());
+        client.write(buffer);
     }
 
 //    Handle client close connection to server
