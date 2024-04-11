@@ -20,7 +20,7 @@ public class RacingArena extends Game {
         gamePlay = new GamePlay();
         logger = Logger.getLogger("root");
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(2);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(new Client(logger, gamePlay));
             executor.shutdown();
         }
