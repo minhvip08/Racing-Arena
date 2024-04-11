@@ -24,6 +24,10 @@ public class WaitingRoom {
         return players.size() == MAX_PLAYER;
     }
 
+    public synchronized int getPlayerCount() {
+        return players.size();
+    }
+
     public synchronized Boolean addPlayer(Player player) {
         if (players.containsValue(player)) {
             logger.info("Player " + player.getName() + " cannot join the waiting room");

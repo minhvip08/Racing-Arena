@@ -78,6 +78,7 @@ public class Client implements Runnable {
                     switch (msg.getString("status")) {
                         case Status.CLIENT_REGISTER:
                             gamePlay.setRegistered(true);
+                            gamePlay.setIndex(msg.getInt("index"));
                             gamePlay.barrier.reset();
                             break;
                         case Status.CLIENT_REGISTER_AGAIN:

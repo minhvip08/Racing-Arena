@@ -37,6 +37,7 @@ public class GameScreen implements Screen {
     Texture finish1T;
     Texture finish2T;
     Texture audienceT;
+    Texture arrowT;
     Sprite[] carS;
     TextureRegion audienceTR;
     BitmapFont font;
@@ -45,6 +46,7 @@ public class GameScreen implements Screen {
     private int[] scores;
     private final int playerCount;
     private final int round;
+    private final int index;
     // simulate the state of player
     private PlayerState playerState = PlayerState.RACING;
     final Stage stage;
@@ -68,7 +70,8 @@ public class GameScreen implements Screen {
         finish2T = new Texture(Gdx.files.classpath("textures/finish_line_inverted.png"));
         audienceT = new Texture(Gdx.files.classpath("textures/audience.png"), true);
         carS = new Sprite[Property.NCAR];
-        font = new BitmapFont();
+        font = new BitmapFont(true);
+        arrowT = new Texture(Gdx.files.classpath("textures/arrow.png"));
         for (int i = 0; i < Property.TCAR_NCOL; ++i) {
             carS[i] = new Sprite(carT, i * 32, 0, 32, 32);
             carS[i].flip(false, true);
@@ -145,6 +148,7 @@ public class GameScreen implements Screen {
 
         playerCount = game.gamePlay.getPlayerCount();
         round = game.gamePlay.getRound();
+        index = game.gamePlay.getIndex();
         distances = new float[playerCount];
         scores = new int[playerCount];
         font.setUseIntegerPositions(false);
@@ -213,10 +217,10 @@ public class GameScreen implements Screen {
             }
             game.batch.draw(edgeT, (Property.LRACE_MAX + 1) * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
         }
+        game.batch.draw(arrowT, 0, (index + 1) * Property.TSIZE, Property.TSIZE, Property.TSIZE);
         for (int i = 0; i < playerCount; ++i) {
-
             game.batch.draw(carS[i], carS[i].getX(), carS[i].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
-            font.draw(game.batch, String.valueOf(scores[i]), (Property.LRACE_MAX + 1) * Property.TSIZE * 1.5f, i * Property.TSIZE * 1.5f);
+            font.draw(game.batch, String.valueOf(scores[i]), (Property.LRACE_MAX + 1.25f) * Property.TSIZE, (i + 1.1f) * Property.TSIZE);
         }
         game.batch.end();
         for (int i = 0; i < playerCount; ++i) {
@@ -304,5 +308,6 @@ public class GameScreen implements Screen {
         finish2T.dispose();
         audienceT.dispose();
         font.dispose();
+        arrowT.dispose();
     }
 }
