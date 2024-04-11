@@ -7,6 +7,8 @@ import org.racingarena.server.tcp.model.Question;
 import org.racingarena.server.tcp.model.WaitingRoom;
 
 import java.nio.channels.SelectionKey;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class GamePlay extends Thread {
@@ -141,12 +143,14 @@ public class GamePlay extends Thread {
         JSONObject response = new JSONObject();
         response.put("status", Status.CLIENT_PLAYER_STATUS);
         response.put("message", "Players status");
-        JSONObject players = new JSONObject();
+//        JSONObject players = new JSONObject();
+        List<JSONObject> players = new ArrayList<>();
         for (Player player : waitingRoom.getRegisteredPlayers()) {
             JSONObject playerObj = new JSONObject();
             playerObj.put("name", player.getName());
             playerObj.put("score", player.getScore());
-            players.put(player.getName(), playerObj);
+            playerObj.put("isEliminated", player.isEliminated());
+            players.add(playerObj);
         }
 
         response.put("players", players);
