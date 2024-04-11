@@ -37,27 +37,27 @@ public class GamePlay {
         this.players = players;
     }
 
-    public void setStatus(String status) {
+    public synchronized void setStatus(String status) {
         this.status = status;
     }
 
-    public String getStatus() {
+    public synchronized String getStatus() {
         return status;
     }
 
-    public void setRound(int round) {
+    public synchronized void setRound(int round) {
         this.round = round;
     }
 
-    public int getRound() {
+    public synchronized int getRound() {
         return round;
     }
 
-    public int getIndex() {
+    public synchronized int getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public synchronized void setIndex(int index) {
         this.index = index;
     }
 
@@ -71,11 +71,11 @@ public class GamePlay {
         this.playerCount = 0;
     }
 
-    public int getPlayerCount() {
+    public synchronized int getPlayerCount() {
         return this.playerCount;
     }
 
-    public void setPlayerCount(int playerCount) {
+    public synchronized void setPlayerCount(int playerCount) {
         this.playerCount = playerCount;
     }
 }
