@@ -59,6 +59,10 @@ public class GamePlay extends Thread {
             }
 
             checkAnswer(currentQuestion);
+            //        check if all players are eliminated
+            if (waitingRoom.isAllPlayersEliminated()) {
+                break;
+            }
             sendPlayersStatus();
             resetRound();
 
@@ -107,10 +111,7 @@ public class GamePlay extends Thread {
                 player.writeTheBuffer(response.toString());
             }
         }
-//        check if all players are eliminated
-        if (waitingRoom.isAllPlayersEliminated()) {
-            endGame();
-        }
+
         //            Bonus point for fastest player
         Player fastestPlayer = waitingRoom.getFastestPlayer();
         if (fastestPlayer!= null && fastestPlayer.getAnswer() != null && fastestPlayer.getAnswer() == question.getAnswer()){
@@ -138,9 +139,13 @@ public class GamePlay extends Thread {
 
     public void endGame() {
         JSONObject response = new JSONObject();
-        response.put("status", Status.CLIENT_END_GAME);
-        response.put("message", "Game is ended");
-        response.put("winner", waitingRoom.getHighestScorePlayer().getName());
+        if (waitingRoom.isAllPlayersEliminated())
+        response.put("status", Status.CLIENT_ALL_PLAYERS_ELIMINATED);
+        else {
+            response.put("status", Status.CLIENT_END_GAME);
+            response.put("message", "Game is ended");
+            response.put("winner", waitingRoom.getHighestScorePlayer().getName());
+        }
 
         waitingRoom.broadcastEndGame(response);
         resetGame();

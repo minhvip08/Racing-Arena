@@ -26,4 +26,5 @@ public class Status {
     public static final String CLIENT_PLAYER_STATUS = "CLIENT_PLAYERS_STATUS";
     public static final String CLIENT_RESET = "CLIENT_RESET";
     public static final String CLIENT_SHUTDOWN = "CLIENT_SHUTDOWN";
+    public static final String CLIENT_ALL_PLAYERS_ELIMINATED = "CLIENT_ALL_PLAYERS_ELIMINATED";
 }
