@@ -1,6 +1,7 @@
 package org.racingarena.client.screen;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.utils.ScreenUtils;
 import org.racingarena.client.game.RacingArena;
 
 public class WaitingScreen implements Screen {
@@ -17,7 +18,7 @@ public class WaitingScreen implements Screen {
 
     @Override
     public void render(float v) {
-
+        ScreenUtils.clear(0, 0, 0, 1);
     }
 
     @Override

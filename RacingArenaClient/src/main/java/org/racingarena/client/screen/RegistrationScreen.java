@@ -8,7 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import org.racingarena.client.game.RacingArena;
+
+import java.time.Clock;
 
 public class RegistrationScreen implements Screen {
     final RacingArena game;
@@ -55,6 +58,13 @@ public class RegistrationScreen implements Screen {
     private void registerButtonClicked() {
         String username = usernameField.getText();
         this.game.gamePlay.setUsername(username);
+        synchronized (game.gamePlay.monitor) {
+            try {
+                game.gamePlay.monitor.wait(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private boolean isValidNickname(String nickname) {

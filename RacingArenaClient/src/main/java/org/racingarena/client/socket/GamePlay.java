@@ -3,7 +3,7 @@ package org.racingarena.client.socket;
 public class GamePlay {
     private boolean registered;
     private String username;
-
+    public final Object monitor;
 
     public synchronized String getUsername() {
         return username;
@@ -22,6 +22,7 @@ public class GamePlay {
     }
 
     public GamePlay() {
+        this.monitor = new Object();
         this.username = null;
         this.registered = false;
     }

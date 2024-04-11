@@ -75,10 +75,11 @@ public class Client implements Runnable {
                     switch (msg.getString("status")) {
                         case Status.CLIENT_REGISTER:
                             gamePlay.setRegistered(true);
+                            gamePlay.monitor.notify();
                             break;
                         case Status.CLIENT_REGISTER_AGAIN:
                             System.out.println("Username already exists. Enter username: (bye -> exit)");
-                            gamePlay.setUsername(null);
+                            gamePlay.monitor.notify();
                             break;
                     }
                     continue;
