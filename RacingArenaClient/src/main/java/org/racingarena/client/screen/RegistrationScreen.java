@@ -9,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import org.racingarena.client.game.RacingArena;
+import org.racingarena.client.socket.ConstantVariable;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class RegistrationScreen implements Screen {
     final RacingArena game;
@@ -54,7 +58,15 @@ public class RegistrationScreen implements Screen {
 
     private void registerButtonClicked() {
         String username = usernameField.getText();
-        this.game.gamePlay.setUsername(username);
+        game.gamePlay.setUsername(username);
+        try {
+            game.gamePlay.barrier.await(ConstantVariable.TIMEOUT, TimeUnit.MILLISECONDS);
+        }
+        catch (Exception e) {
+            if (e instanceof TimeoutException) {
+                System.out.println("registerButtonClicked(): timeout");
+            }
+        }
     }
 
     private boolean isValidNickname(String nickname) {
