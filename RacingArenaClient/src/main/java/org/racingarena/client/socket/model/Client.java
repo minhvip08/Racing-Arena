@@ -122,6 +122,7 @@ public class Client implements Runnable {
                         break;
                     case Status.CLIENT_END_GAME:
                         System.out.println("Game ended");
+                        gamePlay.setStatus(Status.CLIENT_END_GAME);
                         break;
                 }
             }

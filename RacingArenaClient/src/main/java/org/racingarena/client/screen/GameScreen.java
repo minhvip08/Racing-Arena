@@ -283,6 +283,9 @@ public class GameScreen implements Screen {
             }
             game.gamePlay.setStatus(null);
         }
+        else if (Objects.equals(game.gamePlay.getStatus(), Status.CLIENT_END_GAME)) {
+            game.setScreen(new FinishedScreen(game));
+        }
     }
 
     @Override
