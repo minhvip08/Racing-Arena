@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class GamePlay extends Thread {
-    private final int MAX_ROUND = 2;
+    private final int MAX_ROUND = 5;
     private final int MAX_FALIED = 3;
-    private final int MAX_TIME = 10;
+    private final int MAX_TIME = 30;
     private Logger logger;
     private WaitingRoom waitingRoom;
 
@@ -33,6 +33,8 @@ public class GamePlay extends Thread {
             response.put("status", Status.CLIENT_READY);
             response.put("message", "Game is ready to start");
             response.put("duration", 10);
+            response.put("round", MAX_ROUND);
+            response.put("playerCount", waitingRoom.getPlayerRegistered().size());
             waitingRoom.broadcastRegisteredNotEliminatedPlayer(response.toString());
             try {
                 Thread.sleep(10000);
@@ -71,6 +73,8 @@ public class GamePlay extends Thread {
         response.put("status", Status.CLIENT_QUESTION);
         response.put("message", question.getQuestion());
         response.put("duration", MAX_TIME);
+        List<JSONObject> players = getPlayers();
+        response.put("players", players);
         waitingRoom.broadcastRegisteredPlayer(response.toString());
         return question;
     }
@@ -141,11 +145,7 @@ public class GamePlay extends Thread {
         resetGame();
     }
 
-    public void sendPlayersStatus(){
-        JSONObject response = new JSONObject();
-        response.put("status", Status.CLIENT_PLAYER_STATUS);
-        response.put("message", "Players status");
-//        JSONObject players = new JSONObject();
+    private List<JSONObject> getPlayers() {
         List<JSONObject> players = new ArrayList<>();
         for (Player player : waitingRoom.getRegisteredPlayers()) {
             JSONObject playerObj = new JSONObject();
@@ -154,7 +154,15 @@ public class GamePlay extends Thread {
             playerObj.put("isEliminated", player.isEliminated());
             players.add(playerObj);
         }
+        return players;
+    }
 
+    public void sendPlayersStatus(){
+        JSONObject response = new JSONObject();
+        response.put("status", Status.CLIENT_PLAYER_STATUS);
+        response.put("message", "Players status");
+//        JSONObject players = new JSONObject();
+        List<JSONObject> players = getPlayers();
         response.put("players", players);
         waitingRoom.broadcastRegisteredPlayer(response.toString());
 

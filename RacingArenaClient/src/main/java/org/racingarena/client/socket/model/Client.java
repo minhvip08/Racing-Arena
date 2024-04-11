@@ -1,8 +1,10 @@
 package org.racingarena.client.socket.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.racingarena.client.socket.ConstantVariable;
 import org.racingarena.client.socket.GamePlay;
+import org.racingarena.client.socket.Player;
 import org.racingarena.client.socket.Status;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
@@ -85,8 +88,24 @@ public class Client implements Runnable {
                     continue;
                 }
                 switch (msg.getString("status")) {
+                    case Status.CLIENT_READY:
+                        System.out.println("Game is ready to start");
+                        gamePlay.setRound(msg.getInt("round"));
+                        gamePlay.setPlayerCount(msg.getInt("playerCount"));
+                        gamePlay.setStatus(Status.CLIENT_READY);
+                        break;
                     case Status.CLIENT_QUESTION:
                         handleAnswer();
+                        break;
+                    case Status.CLIENT_PLAYERS_STATUS:
+                        try {
+                            ArrayList<Player> playerList = parsePlayerJson(msg.getJSONArray("players"));
+                            gamePlay.setPlayers(playerList);
+                            gamePlay.setStatus(Status.CLIENT_PLAYERS_STATUS);
+                        }
+                        catch (Exception e) {
+                            System.out.println("Error: " + e.getMessage());
+                        }
                         break;
                     case Status.CLIENT_END_GAME:
                         System.out.println("Game ended");
@@ -102,6 +121,19 @@ public class Client implements Runnable {
             }
         }
         return false; // Not done yet
+    }
+
+    private ArrayList<Player> parsePlayerJson(JSONArray playerJson) {
+        ArrayList<Player> playerList = new ArrayList<>();
+        playerJson.forEach(player -> {
+            JSONObject playerObj = (JSONObject) player;
+            playerList.add(new Player(
+                playerObj.getString("name"),
+                playerObj.getInt("score"),
+                playerObj.getBoolean("isEliminated")
+            ));
+        });
+        return playerList;
     }
 
     public static boolean processConnect(SelectionKey key) throws Exception{

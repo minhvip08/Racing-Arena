@@ -9,6 +9,6 @@ public class Property {
     public static final int NCAR = 10;
     public static final int TCAR_NCOL = 5;
     public static final int LRACE_MAX = 25;
-    public static final int SPEED = 1;
+    public static final int SPEED = 5;
     public static final int TIMER = 10;
 }
