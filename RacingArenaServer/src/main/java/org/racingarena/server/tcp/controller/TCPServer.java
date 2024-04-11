@@ -149,7 +149,7 @@ public class TCPServer {
 //            }
 
 
-
+        synchronized (this.waitingRoom) {
 //            Set name for player
             this.waitingRoom.getPlayers().get(key).setName(reqJSON.getString("username"));
             this.waitingRoom.getPlayerByName(reqJSON.getString("username")).setRegistered(true);
@@ -163,6 +163,8 @@ public class TCPServer {
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buffer = ByteBuffer.wrap(obj.toString().getBytes());
             client.write(buffer);
+        }
+
         }
     }
     public void sendResponse(SelectionKey key, JSONObject obj) throws IOException {
