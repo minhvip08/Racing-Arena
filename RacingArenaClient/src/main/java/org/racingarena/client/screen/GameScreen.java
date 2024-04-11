@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
-import org.racingarena.client.object.Calculation;
 import org.racingarena.client.socket.Player;
 import org.racingarena.client.socket.Status;
 
@@ -54,14 +53,14 @@ public class GameScreen implements Screen {
     final TextField answer;
     private float timeSeconds = 0f;
     private float period = 1f;
-    private int timer = Property.TIMER;
+    private int timer;
     Label timerLabel;
-    Calculation calculation;
     Label calculationLabel;
     String Messages = "Enter your answer";
     Label messageLabel;
     public GameScreen(final RacingArena game) {
         this.game = game;
+        System.out.println("Game is ready to start haha");
         carT = new Texture(Gdx.files.classpath("textures/cars.png"));
         carGreyT = new Texture(Gdx.files.classpath("textures/cars_grey.png"));
         roadT = new Texture(Gdx.files.classpath("textures/road.png"));
@@ -91,9 +90,7 @@ public class GameScreen implements Screen {
 
         skin = new Skin(Gdx.files.classpath("orangepeelui/uiskin.json"));
 
-        calculation = new Calculation();
-
-        timerLabel =  new Label(Integer.toString(Property.TIMER), skin, "title");
+        timerLabel =  new Label(Integer.toString(game.gamePlay.getQuestionNAnswer().getDuration()), skin, "title");
 
         Table rootTable = new Table(skin);
         rootTable.setFillParent(true);
@@ -107,8 +104,7 @@ public class GameScreen implements Screen {
         table.background("panel-orange");
         table.add(label).colspan(2).padTop(10.0f);
         table.row();
-        calculation.newCalculation();
-        calculationLabel = new Label(calculation.getCalculation(), skin, "title");
+        calculationLabel = new Label(game.gamePlay.getQuestionNAnswer().getQuestion(), skin, "title");
         table.add(calculationLabel);
         panelTable.add(table);
         answer = new TextField("", skin);
@@ -158,14 +154,24 @@ public class GameScreen implements Screen {
 
     private void submitButtonClicked() {
         try{
-            String Answer = answer.getText().trim();
-            if (calculation.checkAnswer(Integer.parseInt(Answer))) {
-                Messages = "Your answer is correct";
-            } else {
-                Messages = "Your answer is wrong";
-            }
+            int Answer = Integer.parseInt(answer.getText().trim());
+            game.gamePlay.getQuestionNAnswer().setAnswer(Answer);
+            game.gamePlay.setSubmit(true);
         } catch (NumberFormatException e){
+        }
+    }
 
+    public void updateMessage(String message){
+        switch (message){
+            case Status.CLIENT_INCORRECT:
+                Messages = "Your answer is incorrect";
+                break;
+            case Status.CLIENT_CORRECT:
+                Messages = "Your answer is correct";
+                break;
+            default:
+                Messages = "Enter your answer";
+                break;
         }
     }
 
@@ -182,13 +188,16 @@ public class GameScreen implements Screen {
         if (timeSeconds > period){
             timeSeconds-=period;
             timer--;
-            if (timer < 0){
-                timer = Property.TIMER;
-                calculation.newCalculation();
-                calculationLabel.setText(calculation.getCalculation());
-                Messages = Integer.toString(calculation.getAnswer());
+            if (timer < 0 && game.gamePlay.isNewQuestion()){
+                timer = game.gamePlay.getQuestionNAnswer().getDuration();
+                calculationLabel.setText(game.gamePlay.getQuestionNAnswer().getQuestion());
+                Messages = "Enter your answer";
             }
-            timerLabel.setText(Integer.toString(timer));
+            else if (timer < 0){
+                timerLabel.setText("0");
+                Messages = "Waiting for the question";
+            }
+            else timerLabel.setText(Integer.toString(timer));
         }
         messageLabel.setText(Messages);
         stage.act(v);

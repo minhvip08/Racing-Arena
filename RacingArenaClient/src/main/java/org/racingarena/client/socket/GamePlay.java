@@ -1,4 +1,5 @@
 package org.racingarena.client.socket;
+import org.racingarena.client.object.QuestionNAnswer;
 
 import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
@@ -10,6 +11,11 @@ public class GamePlay {
     private int index;
     private int playerCount;
     private String status;
+    boolean newQuestion = false;
+    private QuestionNAnswer questionNAnswer;
+
+    private boolean submit = false;
+    private boolean validName;
     private ArrayList<Player> players;
     public final CyclicBarrier barrier;
 
@@ -60,6 +66,33 @@ public class GamePlay {
     public synchronized void setIndex(int index) {
         this.index = index;
     }
+    public QuestionNAnswer getQuestionNAnswer(){return questionNAnswer;}
+
+    public void setQuestionNAnswer(QuestionNAnswer questionNAnswer) {
+        this.questionNAnswer = questionNAnswer;
+    }
+
+    public void setValidName(boolean validName) {
+        this.validName = validName;
+    }
+
+    public boolean isValidName() {
+        return validName;
+    }
+    public void setSubmit(boolean submit) {
+        this.submit = submit;
+    }
+    public boolean isSubmit() {
+        return submit;
+    }
+
+    public boolean isNewQuestion() {
+        return newQuestion;
+    }
+
+    public void setNewQuestion(boolean newQuestion) {
+        this.newQuestion = newQuestion;
+    }
 
     public GamePlay() {
         this.barrier = new CyclicBarrier(2);
@@ -69,6 +102,8 @@ public class GamePlay {
         this.players = null;
         this.round = 0;
         this.playerCount = 0;
+        this.validName = true;
+        this.questionNAnswer = new QuestionNAnswer();
     }
 
     public synchronized int getPlayerCount() {
@@ -78,4 +113,5 @@ public class GamePlay {
     public synchronized void setPlayerCount(int playerCount) {
         this.playerCount = playerCount;
     }
+
 }

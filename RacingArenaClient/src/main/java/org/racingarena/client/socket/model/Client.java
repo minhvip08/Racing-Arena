@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -44,6 +43,10 @@ public class Client implements Runnable {
             while (true) {
                 if (selector.select() > 0) {
                     boolean doneStatus = processReadySet(selector.selectedKeys());
+                    if (gamePlay.isSubmit()){
+                        handleAnswer(gamePlay.getQuestionNAnswer().getAnswer());
+                        gamePlay.setSubmit(false);
+                    }
                     if (doneStatus) {
                         break;
                     }
@@ -83,6 +86,7 @@ public class Client implements Runnable {
                             break;
                         case Status.CLIENT_REGISTER_AGAIN:
                             System.out.println("Username already exists. Enter username: (bye -> exit)");
+                            gamePlay.setValidName(false);
                             gamePlay.barrier.reset();
                             break;
                     }
@@ -96,7 +100,15 @@ public class Client implements Runnable {
                         gamePlay.setStatus(Status.CLIENT_READY);
                         break;
                     case Status.CLIENT_QUESTION:
-                        handleAnswer();
+                        gamePlay.getQuestionNAnswer().setQuestion(msg.getString("message"));
+                        gamePlay.getQuestionNAnswer().setDuration(msg.getInt("duration"));
+                        gamePlay.setNewQuestion(true);
+                        break;
+                    case Status.CLIENT_INCORRECT:
+                        gamePlay.setStatus(Status.CLIENT_INCORRECT);
+                        break;
+                    case Status.CLIENT_CORRECT:
+                        gamePlay.setStatus(Status.CLIENT_CORRECT);
                         break;
                     case Status.CLIENT_PLAYERS_STATUS:
                         try {
@@ -124,6 +136,7 @@ public class Client implements Runnable {
         return false; // Not done yet
     }
 
+
     private ArrayList<Player> parsePlayerJson(JSONArray playerJson) {
         ArrayList<Player> playerList = new ArrayList<>();
         playerJson.forEach(player -> {
@@ -137,6 +150,8 @@ public class Client implements Runnable {
         return playerList;
     }
 
+
+
     public static boolean processConnect(SelectionKey key) throws Exception{
         SocketChannel channel = (SocketChannel) key.channel();
         while (channel.isConnectionPending()) {
@@ -145,10 +160,8 @@ public class Client implements Runnable {
         return true;
     }
 
-    public void handleAnswer() {
-        System.out.println("Enter your answer: ");
-        Scanner scanner = new Scanner(System.in);
-        int answer = scanner.nextInt();
+    public void handleAnswer(int answer) {
+        System.out.println("SENDING ANSWER");
         JSONObject obj = new JSONObject();
         obj.put("status", Status.SERVER_ANSWER);
         obj.put("answer", answer);
