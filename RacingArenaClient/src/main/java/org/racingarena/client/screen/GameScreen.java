@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,6 +19,12 @@ import org.racingarena.client.game.PlayerState;
 import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
 import org.racingarena.client.object.Calculation;
+import org.racingarena.client.socket.Player;
+import org.racingarena.client.socket.Status;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class GameScreen implements Screen {
     final RacingArena game;
@@ -32,11 +39,12 @@ public class GameScreen implements Screen {
     Texture audienceT;
     Sprite[] carS;
     TextureRegion audienceTR;
+    BitmapFont font;
     // distance travel
-    private int distance = 0;
-    // test variables only, could change later
-    private int raceLength = 5;
-    private int playerCount = 5;
+    private float[] distances;
+    private int[] scores;
+    private final int playerCount;
+    private final int round;
     // simulate the state of player
     private PlayerState playerState = PlayerState.RACING;
     final Stage stage;
@@ -60,6 +68,7 @@ public class GameScreen implements Screen {
         finish2T = new Texture(Gdx.files.classpath("textures/finish_line_inverted.png"));
         audienceT = new Texture(Gdx.files.classpath("textures/audience.png"), true);
         carS = new Sprite[Property.NCAR];
+        font = new BitmapFont();
         for (int i = 0; i < Property.TCAR_NCOL; ++i) {
             carS[i] = new Sprite(carT, i * 32, 0, 32, 32);
             carS[i].flip(false, true);
@@ -133,6 +142,14 @@ public class GameScreen implements Screen {
         table.add(messageLabel);
         panelTable.add(table).growY();
         rootTable.add(panelTable).maxHeight(100.0f).width(Property.WIDTH);
+
+        playerCount = game.gamePlay.getPlayerCount();
+        round = game.gamePlay.getRound();
+        distances = new float[playerCount];
+        scores = new int[playerCount];
+        font.setUseIntegerPositions(false);
+        Arrays.fill(distances, 0f);
+        Arrays.fill(scores, 0);
     }
 
     private void submitButtonClicked() {
@@ -183,41 +200,50 @@ public class GameScreen implements Screen {
         game.batch.draw(audienceT, Property.LRACE_MAX * Property.TSIZE, 0, Property.TSIZE, Property.ROTATE_ORIGIN, Property.TSIZE * 2, Property.TSIZE, 1, 1, 0, 0, 0, Property.TSIZE * 4, Property.TSIZE * 2, true, true);
         for (int i = 1; i <= Property.NCAR; ++i) {
             game.batch.draw(edgeT, 0, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
-            for (int j = 1; j < raceLength; ++j) {
+            for (int j = 1; j < round; ++j) {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             if (i % 2 == 0) {
-                game.batch.draw(finish1T, raceLength * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
+                game.batch.draw(finish1T, round * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             } else {
-                game.batch.draw(finish2T, raceLength * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
+                game.batch.draw(finish2T, round * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
-            for (int j = raceLength + 1; j <= Property.LRACE_MAX; ++j) {
+            for (int j = round + 1; j <= Property.LRACE_MAX; ++j) {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             game.batch.draw(edgeT, (Property.LRACE_MAX + 1) * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
         }
         for (int i = 0; i < playerCount; ++i) {
+
             game.batch.draw(carS[i], carS[i].getX(), carS[i].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
+            font.draw(game.batch, String.valueOf(scores[i]), (Property.LRACE_MAX + 1) * Property.TSIZE * 1.5f, i * Property.TSIZE * 1.5f);
         }
         game.batch.end();
+        for (int i = 0; i < playerCount; ++i) {
+            if (distances[i] != 0) {
+                int sign = distances[i] > 0 ? 1 : -1;
+                carS[i].setX(carS[i].getX() + sign * Property.SPEED);
+                distances[i] -= sign * Property.SPEED;
+            }
+        }
         // RIGHT is equivalent to the server announcing the result
         if (playerState == PlayerState.RACING && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             playerState = PlayerState.WAITING;
-            distance = Property.TSIZE;
+            //distance = Property.TSIZE;
         }
         if (playerState == PlayerState.WAITING) {
             // Simulate server interruption with N key pressed signal
             if (Gdx.input.isKeyPressed(Input.Keys.N)) {
                 playerState = PlayerState.RACING;
-                distance = 0;
+                //distance = 0;
                 // Should forcefully teleport the car forward
                 carS[0].setX(carS[0].getX() + Property.TSIZE - carS[0].getX() % Property.TSIZE);
             }
-            else if (distance == 0) {
-                playerState = PlayerState.RACING;
-            }
+            //else if (distance == 0) {
+            //    playerState = PlayerState.RACING;
+            //}
             else {
-                distance -= Property.SPEED;
+                // distance -= Property.SPEED;
                 // increment to move forward, decrement to move backward
                 carS[0].setX(carS[0].getX() + Property.SPEED);
             }
@@ -226,6 +252,23 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerState = PlayerState.DISQUALIFIED;
             carS[0].setTexture(carGreyT);
+        }
+        // Real
+        if (Objects.equals(game.gamePlay.getStatus(), Status.CLIENT_PLAYERS_STATUS)) {
+            final ArrayList<Player> players = game.gamePlay.getPlayers();
+            for (int i = 0; i < playerCount; ++i) {
+                if (players.get(i).isEliminated()) {
+                    carS[i].setTexture(carGreyT);
+                }
+                else {
+                    int score = players.get(i).score();
+                    if (score > 0) {
+                        distances[i] = score * Property.TSIZE - carS[i].getX();
+                    }
+                    scores[i] = players.get(i).score();
+                }
+            }
+            game.gamePlay.setStatus(null);
         }
     }
 
@@ -260,5 +303,6 @@ public class GameScreen implements Screen {
         finish1T.dispose();
         finish2T.dispose();
         audienceT.dispose();
+        font.dispose();
     }
 }

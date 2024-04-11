@@ -87,30 +87,25 @@ public class Client implements Runnable {
                     }
                     continue;
                 }
-                JSONArray playerJson;
                 switch (msg.getString("status")) {
                     case Status.CLIENT_READY:
                         System.out.println("Game is ready to start");
+                        gamePlay.setRound(msg.getInt("round"));
+                        gamePlay.setPlayerCount(msg.getInt("playerCount"));
+                        gamePlay.setStatus(Status.CLIENT_READY);
+                        break;
+                    case Status.CLIENT_QUESTION:
+                        handleAnswer();
+                        break;
+                    case Status.CLIENT_PLAYERS_STATUS:
                         try {
-                            playerJson = msg.getJSONArray("players");
-                            ArrayList<Player> playerList = new ArrayList<>();
-                            playerJson.forEach(player -> {
-                                JSONObject playerObj = (JSONObject) player;
-                                playerList.add(new Player(
-                                        playerObj.getString("name"),
-                                        playerObj.getInt("score"),
-                                        playerObj.getBoolean("isEliminated")
-                                ));
-                            });
+                            ArrayList<Player> playerList = parsePlayerJson(msg.getJSONArray("players"));
                             gamePlay.setPlayers(playerList);
-                            gamePlay.setStatus(Status.CLIENT_READY);
+                            gamePlay.setStatus(Status.CLIENT_PLAYERS_STATUS);
                         }
                         catch (Exception e) {
                             System.out.println("Error: " + e.getMessage());
                         }
-                        break;
-                    case Status.CLIENT_QUESTION:
-                        handleAnswer();
                         break;
                     case Status.CLIENT_END_GAME:
                         System.out.println("Game ended");
@@ -126,6 +121,19 @@ public class Client implements Runnable {
             }
         }
         return false; // Not done yet
+    }
+
+    private ArrayList<Player> parsePlayerJson(JSONArray playerJson) {
+        ArrayList<Player> playerList = new ArrayList<>();
+        playerJson.forEach(player -> {
+            JSONObject playerObj = (JSONObject) player;
+            playerList.add(new Player(
+                playerObj.getString("name"),
+                playerObj.getInt("score"),
+                playerObj.getBoolean("isEliminated")
+            ));
+        });
+        return playerList;
     }
 
     public static boolean processConnect(SelectionKey key) throws Exception{
