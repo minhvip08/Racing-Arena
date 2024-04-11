@@ -10,9 +10,11 @@ import java.util.logging.Logger;
 
 public class WaitingRoom {
     public static int MAX_PLAYER = 2;
+    public static int MAX_SCORE = 10;
     public volatile Map<SelectionKey, Player> players;
     public volatile Logger logger;
 
+    public volatile int maxScore = 0;
     public WaitingRoom(Logger logger) {
         this.logger = logger;
         players = new LinkedHashMap<>();
@@ -91,6 +93,7 @@ public class WaitingRoom {
                 highestScorePlayer = player;
             }
         }
+        maxScore = highestScorePlayer.getScore();
         return highestScorePlayer;
     }
 
@@ -174,6 +177,10 @@ public class WaitingRoom {
         for (Player player : players.values()) {
             player.resetRound();
         }
+    }
+
+    public synchronized void resetWaitingRoom() {
+        maxScore = 0;
     }
 //    public synchronized void closeOnePlayer(Player player) {
 //        player.closeTheClient();

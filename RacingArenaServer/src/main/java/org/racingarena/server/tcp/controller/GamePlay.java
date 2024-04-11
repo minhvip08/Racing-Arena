@@ -45,7 +45,8 @@ public class GamePlay extends Thread {
     }
 
     public void startGame() {
-        for (int round = 0; round < MAX_ROUND; round++) {
+//        Change from check round to check max score
+        while (waitingRoom.getHighestScorePlayer().getScore() < WaitingRoom.MAX_SCORE) {
             Question currentQuestion = startRound();
 
 //            Wait for all players to answer
@@ -120,6 +121,7 @@ public class GamePlay extends Thread {
     }
 
     public void resetGame() {
+        waitingRoom.resetWaitingRoom();
         for (Player player : waitingRoom.getRegisteredPlayers()) {
             player.reset();
 //            JSONObject response = new JSONObject();

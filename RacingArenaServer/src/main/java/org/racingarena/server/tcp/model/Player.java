@@ -22,6 +22,7 @@ public class Player {
         this.key = key;
         this.name = name;
         this.client = (SocketChannel) key.channel();
+        this.score = 1;
     }
 
     public void checkLosingStreak() {
@@ -75,8 +76,9 @@ public class Player {
         this.isEliminated = false;
         this.timestamp = null;
         this.answer = null;
-        this.score = 0;
+        this.score = 1;
         this.name = "";
+        this.losingStreak = 0;
     }
 
     public void resetRound() {
