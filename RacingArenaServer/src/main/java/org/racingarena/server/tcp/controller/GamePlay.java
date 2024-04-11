@@ -116,6 +116,10 @@ public class GamePlay extends Thread {
     public void resetGame() {
         for (Player player : waitingRoom.getReadyPlayers()) {
             player.reset();
+//            JSONObject response = new JSONObject();
+//            response.put("status", Status.CLIENT_RESET);
+//            response.put("message", "Game is reset");
+//            player.writeTheBuffer(response.toString());
         }
     }
 

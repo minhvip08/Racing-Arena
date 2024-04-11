@@ -21,6 +21,9 @@ public class Status {
 
     public static final String CLIENT_END_GAME = "CLIENT_END_GAME";
     public static final String CLIENT_REGISTER_AGAIN = "CLIENT_REGISTER_AGAIN" ;
+    public static final String CLIENT_RESET = "CLIENT_RESET";
+    public static final String CLIENT_SHUTDOWN = "CLIENT_SHUTDOWN";
+
 //    public static final String CLIENT_ANSWER = "CLIENT_ANSWER";
 }
 

@@ -67,6 +67,7 @@ public class TCPServer {
                     if (key.isReadable()) {
                         handleReadable(key);
                     }
+
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -154,6 +155,10 @@ public class TCPServer {
 
 //    Handle client close connection to server
     public void handleClose(SelectionKey key) throws IOException {
+        JSONObject obj = new JSONObject();
+        obj.put("status", Status.CLIENT_SHUTDOWN);
+        obj.put("message", "Client " + key.toString() + " closed connection");
+        this.waitingRoom.getPlayers().get(key).writeTheBuffer(obj.toString());
         this.waitingRoom.getPlayers().get(key).closeTheClient();
         this.waitingRoom.removePlayer(this.waitingRoom.getPlayers().get(key));
         this.logger.info("Client closed");

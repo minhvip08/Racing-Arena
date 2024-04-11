@@ -76,6 +76,7 @@ public class Player {
         this.timestamp = null;
         this.answer = null;
         this.score = 0;
+        this.name = "";
     }
 
     public void resetRound() {
