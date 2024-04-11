@@ -7,6 +7,7 @@ public class GamePlay {
     private int round;
     private boolean registered;
     private String username;
+    private int index;
     private int playerCount;
     private String status;
     private ArrayList<Player> players;
@@ -50,6 +51,14 @@ public class GamePlay {
 
     public int getRound() {
         return round;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public GamePlay() {
