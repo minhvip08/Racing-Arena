@@ -1,8 +1,10 @@
 package org.racingarena.client.socket.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.racingarena.client.socket.ConstantVariable;
 import org.racingarena.client.socket.GamePlay;
+import org.racingarena.client.socket.Player;
 import org.racingarena.client.socket.Status;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
@@ -84,7 +87,28 @@ public class Client implements Runnable {
                     }
                     continue;
                 }
+                JSONArray playerJson;
                 switch (msg.getString("status")) {
+                    case Status.CLIENT_READY:
+                        System.out.println("Game is ready to start");
+                        try {
+                            playerJson = msg.getJSONArray("players");
+                            ArrayList<Player> playerList = new ArrayList<>();
+                            playerJson.forEach(player -> {
+                                JSONObject playerObj = (JSONObject) player;
+                                playerList.add(new Player(
+                                        playerObj.getString("name"),
+                                        playerObj.getInt("score"),
+                                        playerObj.getBoolean("isEliminated")
+                                ));
+                            });
+                            gamePlay.setPlayers(playerList);
+                            gamePlay.setStatus(Status.CLIENT_READY);
+                        }
+                        catch (Exception e) {
+                            System.out.println("Error: " + e.getMessage());
+                        }
+                        break;
                     case Status.CLIENT_QUESTION:
                         handleAnswer();
                         break;

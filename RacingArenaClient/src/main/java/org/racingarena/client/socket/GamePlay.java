@@ -1,11 +1,13 @@
 package org.racingarena.client.socket;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 
 public class GamePlay {
     private boolean registered;
     private String username;
+    private String status;
+    private ArrayList<Player> players;
     public final CyclicBarrier barrier;
 
     public synchronized String getUsername() {
@@ -24,9 +26,27 @@ public class GamePlay {
         this.registered = registered;
     }
 
+    public synchronized ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public synchronized void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
     public GamePlay() {
         this.barrier = new CyclicBarrier(2);
         this.username = null;
         this.registered = false;
+        this.status = null;
+        this.players = null;
     }
 }
