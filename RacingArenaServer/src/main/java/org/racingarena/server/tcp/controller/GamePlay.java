@@ -106,9 +106,10 @@ public class GamePlay extends Thread {
                 response.put("isEliminated", player.isEliminated());
                 player.writeTheBuffer(response.toString());
             }
-
-
-
+        }
+//        check if all players are eliminated
+        if (waitingRoom.isAllPlayersEliminated()) {
+            endGame();
         }
         //            Bonus point for fastest player
         Player fastestPlayer = waitingRoom.getFastestPlayer();

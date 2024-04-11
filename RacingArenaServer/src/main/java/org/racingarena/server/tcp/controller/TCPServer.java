@@ -20,6 +20,7 @@ import java.nio.channels.SocketChannel;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -48,6 +49,13 @@ public class TCPServer {
 
     public void run() {
         this.logger.info("Server started on port " + ConstantVariable.PORT);
+        Scanner scanner = new Scanner(System.in);
+        int numberOfPlayers = 0;
+        while (numberOfPlayers < 2 || numberOfPlayers > 10) {
+            System.out.println("Enter number of players: (2<=N<=10)");
+            numberOfPlayers = scanner.nextInt();
+        }
+        WaitingRoom.MAX_PLAYER = numberOfPlayers;
         this.gamePlay.start();
         Iterator<SelectionKey> keys;
         while (true) {
@@ -126,6 +134,15 @@ public class TCPServer {
                 sendResponse(key, obj);
                 return;
             }
+            else if (!reqJSON.getString("username").matches("[a-zA-Z0-9_]{1,10}")){
+                this.logger.info("Invalid username");
+                JSONObject obj = new JSONObject();
+                obj.put("status", Status.CLIENT_REGISTER_AGAIN);
+                obj.put("message", "Invalid username");
+                sendResponse(key, obj);
+                return;
+            }
+
 //            if (this.waitingRoom.isFull()) {
 //                this.logger.info("Room is full");
 //                return;

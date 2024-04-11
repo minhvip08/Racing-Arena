@@ -89,11 +89,15 @@ public class WaitingRoom {
     public synchronized Player getHighestScorePlayer() {
         Player highestScorePlayer = null;
         for (Player player : players.values()) {
-            if (highestScorePlayer == null || !player.isEliminated() || player.getScore() > highestScorePlayer.getScore()) {
+            if (player.isEliminated())
+                continue;
+            if (highestScorePlayer == null || player.getScore() > highestScorePlayer.getScore() ||
+                    (player.getScore() == highestScorePlayer.getScore() && (player.getTimestamp() != null && highestScorePlayer.getTimestamp() != null && player.getTimestamp().isBefore(highestScorePlayer.getTimestamp())))) {
                 highestScorePlayer = player;
             }
         }
-        maxScore = highestScorePlayer.getScore();
+        if (highestScorePlayer != null)
+            maxScore = highestScorePlayer.getScore();
         return highestScorePlayer;
     }
 
@@ -105,14 +109,29 @@ public class WaitingRoom {
 //        return sortedPlayers;
 //    }
 
+//    If a player has null timestamp, it means the player has not answered the question yet
     public synchronized Player getFastestPlayer() {
         Player lowestTimestampPlayer = null;
         for (Player player : getReadyPlayers()) {
-            if (lowestTimestampPlayer == null || (player.getTimestamp() != null && lowestTimestampPlayer.getTimestamp() != null && player.getTimestamp().isBefore(lowestTimestampPlayer.getTimestamp()))) {
+            if (lowestTimestampPlayer == null ||
+                    (player.getTimestamp() != null && lowestTimestampPlayer.getTimestamp() != null && player.getTimestamp().isBefore(lowestTimestampPlayer.getTimestamp()))) {
+                lowestTimestampPlayer = player;
+            }
+            else if (lowestTimestampPlayer.getTimestamp() == null && player.getTimestamp() != null){
                 lowestTimestampPlayer = player;
             }
         }
         return lowestTimestampPlayer;
+    }
+
+//    Check all players are eliminated or not
+    public synchronized Boolean isAllPlayersEliminated() {
+        for (Player player : players.values()) {
+            if (!player.isEliminated()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 // Get all players who are registered and not eliminated
