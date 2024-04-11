@@ -68,9 +68,17 @@ public class WaitingRoom {
     }
 
 //    broadcast to all players who are registered and not eliminated
-    public synchronized void broadcastRegistered(String message) {
+    public synchronized void broadcastRegisteredNotEliminatedPlayer(String message) {
         for (Player player : players.values()) {
             if (player.isRegistered() && !player.isEliminated()) {
+                player.writeTheBuffer(message);
+            }
+        }
+    }
+
+    public synchronized void broadcastRegisteredPlayer(String message) {
+        for (Player player : players.values()) {
+            if (player.isRegistered()) {
                 player.writeTheBuffer(message);
             }
         }

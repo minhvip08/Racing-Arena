@@ -31,7 +31,7 @@ public class GamePlay extends Thread {
             response.put("status", Status.CLIENT_READY);
             response.put("message", "Game is ready to start");
             response.put("duration", 10);
-            waitingRoom.broadcastRegistered(response.toString());
+            waitingRoom.broadcastRegisteredNotEliminatedPlayer(response.toString());
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
@@ -68,7 +68,7 @@ public class GamePlay extends Thread {
         response.put("status", Status.CLIENT_QUESTION);
         response.put("message", question.getQuestion());
         response.put("duration", MAX_TIME);
-        waitingRoom.broadcastRegistered(response.toString());
+        waitingRoom.broadcastRegisteredPlayer(response.toString());
         return question;
     }
 
@@ -146,7 +146,7 @@ public class GamePlay extends Thread {
         }
 
         response.put("players", players);
-        waitingRoom.broadcastRegistered(response.toString());
+        waitingRoom.broadcastRegisteredPlayer(response.toString());
 
     }
 }
