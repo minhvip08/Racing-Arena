@@ -122,6 +122,15 @@ public class WaitingRoom {
         return readyPlayers;
     }
 
+    public synchronized List<Player> getRegisteredPlayers(){
+        List<Player> registeredPlayers = new ArrayList<>();
+        for (Player player : players.values()) {
+            if (player.isRegistered())
+                registeredPlayers.add(player);
+        }
+        return registeredPlayers;
+    }
+
     public synchronized Player getPlayerByName(String name) {
         for (Player player : players.values()) {
             if (player.getName().equals(name)) {

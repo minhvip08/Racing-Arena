@@ -75,21 +75,25 @@ public class GamePlay extends Thread {
     public void checkAnswer(Question question) {
         int incorrect = 0;
 
-        for (Player player : waitingRoom.getReadyPlayers()) {
+        for (Player player : waitingRoom.getRegisteredPlayers()) {
 
             JSONObject response = new JSONObject();
             if (player.getAnswer() == null || player.getAnswer() != question.getAnswer()) {
-                incorrect++;
-                player.setScore(player.getScore() - 1);
-                player.incrementLosingStreak();
-                player.checkLosingStreak();
+                if (!player.isEliminated()){
+                    incorrect++;
+                    player.setScore(player.getScore() - 1);
+                    player.incrementLosingStreak();
+                    player.checkLosingStreak();
+                }
                 response.put("status", Status.CLIENT_INCORRECT);
                 response.put("message", "Incorrect answer");
                 response.put("isEliminated", player.isEliminated());
                 player.writeTheBuffer(response.toString());
             } else {
-                player.setScore(player.getScore() + 1);
-                player.resetLosingStreak();
+                if (!player.isEliminated()) {
+                    player.setScore(player.getScore() + 1);
+                    player.resetLosingStreak();
+                }
                 response.put("status", Status.CLIENT_CORRECT);
                 response.put("message", "Correct answer");
                 response.put("isEliminated", player.isEliminated());
@@ -108,13 +112,13 @@ public class GamePlay extends Thread {
     }
 
     public void resetRound() {
-        for (Player player : waitingRoom.getReadyPlayers()) {
+        for (Player player : waitingRoom.getRegisteredPlayers()) {
             player.resetRound();
         }
     }
 
     public void resetGame() {
-        for (Player player : waitingRoom.getReadyPlayers()) {
+        for (Player player : waitingRoom.getRegisteredPlayers()) {
             player.reset();
 //            JSONObject response = new JSONObject();
 //            response.put("status", Status.CLIENT_RESET);
@@ -138,7 +142,7 @@ public class GamePlay extends Thread {
         response.put("status", Status.CLIENT_PLAYER_STATUS);
         response.put("message", "Players status");
         JSONObject players = new JSONObject();
-        for (Player player : waitingRoom.getReadyPlayers()) {
+        for (Player player : waitingRoom.getRegisteredPlayers()) {
             JSONObject playerObj = new JSONObject();
             playerObj.put("name", player.getName());
             playerObj.put("score", player.getScore());
