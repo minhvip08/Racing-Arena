@@ -149,7 +149,7 @@ public class GameScreen implements Screen {
         scores = new int[playerCount];
         font.setUseIntegerPositions(false);
         Arrays.fill(distances, 0f);
-        Arrays.fill(scores, 0);
+        Arrays.fill(scores, 1);
     }
 
     private void submitButtonClicked() {
@@ -238,33 +238,6 @@ public class GameScreen implements Screen {
                 carS[i].setX(carS[i].getX() + sign * Property.SPEED);
                 distances[i] -= sign * Property.SPEED;
             }
-        }
-        // RIGHT is equivalent to the server announcing the result
-        if (playerState == PlayerState.RACING && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            playerState = PlayerState.WAITING;
-            //distance = Property.TSIZE;
-        }
-        if (playerState == PlayerState.WAITING) {
-            // Simulate server interruption with N key pressed signal
-            if (Gdx.input.isKeyPressed(Input.Keys.N)) {
-                playerState = PlayerState.RACING;
-                //distance = 0;
-                // Should forcefully teleport the car forward
-                carS[0].setX(carS[0].getX() + Property.TSIZE - carS[0].getX() % Property.TSIZE);
-            }
-            //else if (distance == 0) {
-            //    playerState = PlayerState.RACING;
-            //}
-            else {
-                // distance -= Property.SPEED;
-                // increment to move forward, decrement to move backward
-                carS[0].setX(carS[0].getX() + Property.SPEED);
-            }
-        }
-        // Simulate player disqualification with D key pressed signal
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            playerState = PlayerState.DISQUALIFIED;
-            carS[0].setTexture(carGreyT);
         }
         // Real
         if (Objects.equals(game.gamePlay.getStatus(), Status.CLIENT_PLAYERS_STATUS)) {
