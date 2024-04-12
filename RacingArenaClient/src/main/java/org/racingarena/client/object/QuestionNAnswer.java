@@ -29,7 +29,7 @@ public class QuestionNAnswer {
     }
 
     public void setDuration(int duration) {
-        this.duration = duration;
+        this.duration = duration - 1;
     }
 
     public int getDuration() {

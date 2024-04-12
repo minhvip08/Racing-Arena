@@ -26,6 +26,8 @@ public class FinishedScreen implements Screen {
 
     Label timeLabel;
 
+    Label messageLabel;
+
     public FinishedScreen(final RacingArena game) {
         this.game = game;
         this.stage = new Stage();
@@ -39,12 +41,26 @@ public class FinishedScreen implements Screen {
         rootTable.setFillParent(true);
         stage.addActor(rootTable);
 
+        String Msg;
+
+        if (game.gamePlay.getWinner() != null){
+            Msg = "Congratulation! you are the winner:))";
+        }
+        else{
+            Msg = "You got eliminated!";
+        }
+
+        rootTable.row();
         Label label = new Label("GAME OVER", skin, "title");
         label.setAlignment(Align.top);
         rootTable.add(label).colspan(2).growX();
 
         rootTable.row();
+        messageLabel = new Label(Msg, skin, "title");
+        messageLabel.setAlignment(Align.top);
+        rootTable.add(messageLabel).colspan(2).growX();
 
+        rootTable.row();
         label = new Label("The window will close in", skin);
         label.setAlignment(Align.top);
         rootTable.add(label).colspan(2).growX();

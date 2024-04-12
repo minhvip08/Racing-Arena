@@ -179,6 +179,7 @@ public class GameScreen implements Screen {
             if (timer < 0 && game.gamePlay.isNewQuestion() && !game.gamePlay.isSubmit()){
                 timer = game.gamePlay.getQuestionNAnswer().getDuration();
                 calculationLabel.setText(game.gamePlay.getQuestionNAnswer().getQuestion());
+                game.gamePlay.setNewQuestion(false);
                 Messages = "Enter your answer";
             }
             else if (timer < 0){
