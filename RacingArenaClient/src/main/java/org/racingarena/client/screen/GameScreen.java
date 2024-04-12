@@ -157,24 +157,12 @@ public class GameScreen implements Screen {
             int Answer = Integer.parseInt(answer.getText().trim());
             game.gamePlay.getQuestionNAnswer().setAnswer(Answer);
             game.gamePlay.setSubmit(true);
+            game.gamePlay.setReceived(false);
+            Messages = "Waiting for the result";
         } catch (NumberFormatException e){
+            Messages = "Please enter a number";
         }
     }
-
-    public void updateMessage(String message){
-        switch (message){
-            case Status.CLIENT_INCORRECT:
-                Messages = "Your answer is incorrect";
-                break;
-            case Status.CLIENT_CORRECT:
-                Messages = "Your answer is correct";
-                break;
-            default:
-                Messages = "Enter your answer";
-                break;
-        }
-    }
-
     @Override
     public void show() {
 
@@ -188,7 +176,7 @@ public class GameScreen implements Screen {
         if (timeSeconds > period){
             timeSeconds-=period;
             timer--;
-            if (timer < 0 && game.gamePlay.isNewQuestion()){
+            if (timer < 0 && game.gamePlay.isNewQuestion() && !game.gamePlay.isSubmit()){
                 timer = game.gamePlay.getQuestionNAnswer().getDuration();
                 calculationLabel.setText(game.gamePlay.getQuestionNAnswer().getQuestion());
                 Messages = "Enter your answer";

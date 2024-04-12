@@ -102,10 +102,12 @@ public class Client implements Runnable {
                         gamePlay.setNewQuestion(true);
                         break;
                     case Status.CLIENT_INCORRECT:
-                        gamePlay.setStatus(Status.CLIENT_INCORRECT);
+                        gamePlay.setPrevCorrect(false);
+                        gamePlay.setReceived(true);
                         break;
                     case Status.CLIENT_CORRECT:
-                        gamePlay.setStatus(Status.CLIENT_CORRECT);
+                        gamePlay.setPrevCorrect(true);
+                        gamePlay.setReceived(true);
                         break;
                     case Status.CLIENT_PLAYERS_STATUS:
                         try {

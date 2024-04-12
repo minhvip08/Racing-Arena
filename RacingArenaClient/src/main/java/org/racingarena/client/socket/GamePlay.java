@@ -11,11 +11,13 @@ public class GamePlay {
     private int index;
     private int playerCount;
     private String status;
-    boolean newQuestion = false;
+    private boolean newQuestion = false;
     private QuestionNAnswer questionNAnswer;
-
+    private boolean PrevCorrect = false;
     private boolean submit = false;
+    private boolean received = false;
     private Winner winner;
+
     private boolean validName;
     private ArrayList<Player> players;
     public final CyclicBarrier barrier;
@@ -86,14 +88,16 @@ public class GamePlay {
     public boolean isSubmit() {
         return submit;
     }
-
+    public boolean isPrevCorrect() {return PrevCorrect;}
+    public void setPrevCorrect(boolean prevCorrect) {PrevCorrect = prevCorrect;}
     public boolean isNewQuestion() {
         return newQuestion;
     }
-
     public void setNewQuestion(boolean newQuestion) {
         this.newQuestion = newQuestion;
     }
+    public boolean isReceived() {return received;}
+    public void setReceived(boolean received) {this.received = received;}
 
     public synchronized int getPlayerCount() {
         return this.playerCount;
