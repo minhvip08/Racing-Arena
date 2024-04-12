@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'org.graalvm.buildtools.native' version '0.10.1'
 }
 
 group = 'org.racingarena.server'
@@ -14,7 +15,24 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20240303'
+}
 
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': 'org.racingarena.server.tcp.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+graalvmNative {
+    binaries {
+        main {
+            mainClass = 'org.racingarena.server.tcp.Main'
+        }
+    }
 }
 
 test {
