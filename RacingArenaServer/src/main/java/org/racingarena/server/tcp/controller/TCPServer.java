@@ -154,7 +154,7 @@ public class TCPServer {
             JSONObject obj = new JSONObject();
             obj.put("status", Status.CLIENT_REGISTER);
             obj.put("message", "Welcome " + reqJSON.getString("username"));
-            obj.put("index", waitingRoom.getPlayerCount() - 1);
+            obj.put("index", waitingRoom.getPlayerRegistered().size() - 1);
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buffer = ByteBuffer.wrap(obj.toString().getBytes());
             client.write(buffer);
