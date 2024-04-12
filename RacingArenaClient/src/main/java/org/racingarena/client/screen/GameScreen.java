@@ -29,7 +29,6 @@ public class GameScreen implements Screen {
     final RacingArena game;
     OrthographicCamera camera;
     FitViewport viewport;
-    Texture carT;
     Texture carGreyT;
     Texture roadT;
     Texture edgeT;
@@ -37,7 +36,6 @@ public class GameScreen implements Screen {
     Texture finish2T;
     Texture audienceT;
     Texture arrowT;
-    Sprite[] carS;
     TextureRegion audienceTR;
     BitmapFont font;
     // distance travel
@@ -61,23 +59,22 @@ public class GameScreen implements Screen {
     public GameScreen(final RacingArena game) {
         this.game = game;
         System.out.println("Game is ready to start haha");
-        carT = new Texture(Gdx.files.classpath("textures/cars.png"));
         carGreyT = new Texture(Gdx.files.classpath("textures/cars_grey.png"));
         roadT = new Texture(Gdx.files.classpath("textures/road.png"));
         edgeT = new Texture(Gdx.files.classpath("textures/edge.png"));
         finish1T = new Texture(Gdx.files.classpath("textures/finish_line.png"));
         finish2T = new Texture(Gdx.files.classpath("textures/finish_line_inverted.png"));
         audienceT = new Texture(Gdx.files.classpath("textures/audience.png"), true);
-        carS = new Sprite[Property.NCAR];
+        game.carS = new Sprite[Property.NCAR];
         font = new BitmapFont(true);
         arrowT = new Texture(Gdx.files.classpath("textures/arrow.png"));
         for (int i = 0; i < Property.TCAR_NCOL; ++i) {
-            carS[i] = new Sprite(carT, i * 32, 0, 32, 32);
-            carS[i].flip(false, true);
-            carS[i].setPosition(Property.TSIZE, Property.TSIZE * (i + 1));
-            carS[i + Property.TCAR_NCOL] = new Sprite(carT, i * 32, 32, 32, 32);
-            carS[i + Property.TCAR_NCOL].flip(false, true);
-            carS[i + Property.TCAR_NCOL].setPosition(Property.TSIZE, Property.TSIZE * (i + 1 + Property.TCAR_NCOL));
+            game.carS[i] = new Sprite(game.carT, i * 32, 0, 32, 32);
+            game.carS[i].flip(false, true);
+            game.carS[i].setPosition(Property.TSIZE, Property.TSIZE * (i + 1));
+            game.carS[i + Property.TCAR_NCOL] = new Sprite(game.carT, i * 32, 32, 32, 32);
+            game.carS[i + Property.TCAR_NCOL].flip(false, true);
+            game.carS[i + Property.TCAR_NCOL].setPosition(Property.TSIZE, Property.TSIZE * (i + 1 + Property.TCAR_NCOL));
         }
         audienceTR = new TextureRegion(audienceT, Property.TSIZE * 2, 0, Property.TSIZE * 4, Property.TSIZE * 2);
         audienceTR.flip(false, true);
@@ -216,14 +213,14 @@ public class GameScreen implements Screen {
         }
         game.batch.draw(arrowT, 0, (index + 1) * Property.TSIZE, Property.TSIZE, Property.TSIZE);
         for (int i = 0; i < playerCount; ++i) {
-            game.batch.draw(carS[i], carS[i].getX(), carS[i].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
+            game.batch.draw(game.carS[i], game.carS[i].getX(), game.carS[i].getY(), Property.ROTATE_ORIGIN, Property.ROTATE_ORIGIN, Property.TSIZE, Property.TSIZE, 1, 1, 90);
             font.draw(game.batch, String.valueOf(scores[i]), (Property.LRACE_MAX + 1.25f) * Property.TSIZE, (i + 1.1f) * Property.TSIZE);
         }
         game.batch.end();
         for (int i = 0; i < playerCount; ++i) {
             if (distances[i] != 0) {
                 int sign = distances[i] > 0 ? 1 : -1;
-                carS[i].setX(carS[i].getX() + sign * Property.SPEED);
+                game.carS[i].setX(game.carS[i].getX() + sign * Property.SPEED);
                 distances[i] -= sign * Property.SPEED;
             }
         }
@@ -233,12 +230,12 @@ public class GameScreen implements Screen {
             final ArrayList<Player> players = game.gamePlay.getPlayers();
             for (int i = 0; i < playerCount; ++i) {
                 if (players.get(i).isEliminated()) {
-                    carS[i].setTexture(carGreyT);
+                    game.carS[i].setTexture(carGreyT);
                 }
                 else {
                     int score = players.get(i).score();
                     if (score > 0) {
-                        distances[i] = score * Property.TSIZE - carS[i].getX();
+                        distances[i] = score * Property.TSIZE - game.carS[i].getX();
                     }
                     scores[i] = score;
                 }
@@ -276,7 +273,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        carT.dispose();
+        game.carT.dispose();
         carGreyT.dispose();
         roadT.dispose();
         edgeT.dispose();

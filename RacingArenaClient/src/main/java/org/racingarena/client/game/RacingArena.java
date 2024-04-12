@@ -1,7 +1,11 @@
 package org.racingarena.client.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.racingarena.client.screen.RegistrationScreen;
 import org.racingarena.client.socket.GamePlay;
 import org.racingarena.client.socket.model.Client;
@@ -14,6 +18,8 @@ public class RacingArena extends Game {
     public SpriteBatch batch;
     public GamePlay gamePlay;
     public Logger logger;
+    public Texture carT;
+    public Sprite[] carS;
 
     @Override
     public void create() {
@@ -28,6 +34,8 @@ public class RacingArena extends Game {
         catch (Exception e) {
             e.printStackTrace();
         }
+        carT = new Texture(Gdx.files.classpath("textures/cars.png"));
+        carS = new Sprite[Property.NCAR];
         this.setScreen(new RegistrationScreen(this));
     }
 

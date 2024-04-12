@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import org.racingarena.client.game.Property;
 import org.racingarena.client.game.RacingArena;
 import org.racingarena.client.socket.Status;
 import org.racingarena.client.socket.Winner;
@@ -43,7 +44,7 @@ public class FinishedScreen implements Screen {
 
         String Msg;
 
-        if (game.gamePlay.getWinner() != null){
+        if (winner != null) {
             Msg = "The winner is " + game.gamePlay.getWinner().name() + ", score: " + game.gamePlay.getWinner().score();
         }
         else{
@@ -92,6 +93,12 @@ public class FinishedScreen implements Screen {
         else timeLabel.setText(Integer.toString(timer));
         stage.act(delta);
         stage.draw();
+        if (winner != null) {
+            game.batch.begin();
+            game.batch.draw(game.carS[winner.index()], (float) Property.WIDTH / 2 - Property.TSIZE * 2, (float) Property.HEIGHT / 2 + Property.TSIZE * 2,
+                    Property.TSIZE * 4, Property.TSIZE * 4);
+            game.batch.end();
+        }
     }
 
     @Override
