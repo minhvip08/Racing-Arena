@@ -67,9 +67,10 @@ public class TCPServer {
                     if (key.isAcceptable()) {
                         handleAcceptable(key);
                     }
-                    if (key.isReadable()) {
+                    else if (key.isReadable()) {
                         handleReadable(key);
                     }
+
 
                 }
             } catch (Exception e) {
@@ -94,7 +95,7 @@ public class TCPServer {
 //    Handle client message to server
     public void handleReadable(SelectionKey key) throws Exception {
         String message = this.waitingRoom.getPlayers().get(key).readTheBuffer();
-        if (message == null) {
+        if (message == null || message.isEmpty()) {
             JSONObject obj = new JSONObject();
             obj.put("status", Status.CLIENT_ERROR);
             obj.put("message", "Invalid message");

@@ -238,7 +238,7 @@ public class Client implements Runnable {
 
     public void announceClientShutdown() throws IOException {
         JSONObject obj = new JSONObject();
-        obj.put("status", Status.CLIENT_SHUTDOWN);
+        obj.put("status", Status.SERVER_SHUTDOWN);
         this.send(obj);
         this.client.close();
         gamePlay.shutdown();

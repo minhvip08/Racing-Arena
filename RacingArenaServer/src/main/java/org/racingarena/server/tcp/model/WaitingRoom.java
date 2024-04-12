@@ -91,7 +91,9 @@ public class WaitingRoom {
         for (Player player : players.values()) {
             if (player.isRegistered()) {
                 player.writeTheBuffer(message);
+                logger.info("Broadcast to " + player.getName());
             }
+
         }
     }
 
