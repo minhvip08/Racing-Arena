@@ -49,13 +49,8 @@ public class TCPServer {
 
     public void run() {
         this.logger.info("Server started on port " + ConstantVariable.PORT);
-        Scanner scanner = new Scanner(System.in);
         int numberOfPlayers = 0;
-        while (numberOfPlayers < 2 || numberOfPlayers > 10) {
-            System.out.println("Enter number of players: (2<=N<=10)");
-            numberOfPlayers = scanner.nextInt();
-        }
-        WaitingRoom.MAX_PLAYER = numberOfPlayers;
+
         this.gamePlay.start();
         Iterator<SelectionKey> keys;
         while (true) {

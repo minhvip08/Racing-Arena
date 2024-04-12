@@ -33,7 +33,7 @@ public class GamePlay extends Thread {
             JSONObject response = new JSONObject();
             response.put("status", Status.CLIENT_READY);
             response.put("message", "Game is ready to start");
-            response.put("duration", 10);
+            response.put("duration", 30);
             response.put("round", MAX_ROUND);
             response.put("playerCount", waitingRoom.getPlayerRegistered().size());
             waitingRoom.broadcastRegisteredNotEliminatedPlayer(response.toString());
