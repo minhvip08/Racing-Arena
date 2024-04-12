@@ -1,5 +1,7 @@
 package org.racingarena.client;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import org.racingarena.client.game.Property;
@@ -18,6 +20,7 @@ public class Main {
         config.setWindowedMode(Property.WIDTH, Property.HEIGHT);
         config.useVsync(true);
         config.setForegroundFPS(Property.FPS);
+        config.setWindowIcon(Files.FileType.Internal, "icon.png");
         new Lwjgl3Application(new RacingArena(), config);
     }
 }
