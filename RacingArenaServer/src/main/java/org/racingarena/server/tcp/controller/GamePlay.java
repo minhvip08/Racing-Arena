@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class GamePlay extends Thread {
     private final int MAX_ROUND = 5;
-    private final int MAX_FALIED = 3;
+    private final int MAX_FAILED = 3;
     private final int MAX_TIME = 30;
     private Logger logger;
     private WaitingRoom waitingRoom;
@@ -34,7 +34,7 @@ public class GamePlay extends Thread {
             response.put("status", Status.CLIENT_READY);
             response.put("message", "Game is ready to start");
             response.put("duration", 30);
-            response.put("round", MAX_ROUND);
+            response.put("raceLength", WaitingRoom.MAX_SCORE);
             response.put("playerCount", waitingRoom.getPlayerRegistered().size());
             waitingRoom.broadcastRegisteredNotEliminatedPlayer(response.toString());
             try {

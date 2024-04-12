@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class WaitingRoom {
     public static int MAX_PLAYER = 2;
-    public static int MAX_SCORE = 1;
+    public static int MAX_SCORE = 4;
     public volatile Map<SelectionKey, Player> players;
     public volatile Logger logger;
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 
 public class GamePlay {
-    private int round;
+    private int raceLength;
     private boolean registered;
     private String username;
     private int index;
@@ -55,12 +55,12 @@ public class GamePlay {
         return status;
     }
 
-    public synchronized void setRound(int round) {
-        this.round = round;
+    public synchronized void setRaceLength(int raceLength) {
+        this.raceLength = raceLength;
     }
 
-    public synchronized int getRound() {
-        return round;
+    public synchronized int getRaceLength() {
+        return raceLength;
     }
 
     public synchronized int getIndex() {
@@ -129,7 +129,7 @@ public class GamePlay {
         this.registered = false;
         this.status = null;
         this.players = null;
-        this.round = 0;
+        this.raceLength = 0;
         this.winner = null;
         this.playerCount = 0;
         this.validName = true;
@@ -142,7 +142,7 @@ public class GamePlay {
         this.registered = false;
         this.status = null;
         this.players = null;
-        this.round = 0;
+        this.raceLength = 0;
         this.winner = null;
         this.playerCount = 0;
         this.validName = true;

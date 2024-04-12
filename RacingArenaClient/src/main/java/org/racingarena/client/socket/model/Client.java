@@ -93,7 +93,7 @@ public class Client implements Runnable {
                 switch (msg.getString("status")) {
                     case Status.CLIENT_READY:
                         System.out.println("Game is ready to start");
-                        gamePlay.setRound(msg.getInt("round"));
+                        gamePlay.setRaceLength(msg.getInt("raceLength"));
                         gamePlay.setPlayerCount(msg.getInt("playerCount"));
                         gamePlay.setStatus(Status.CLIENT_READY);
                         break;

@@ -1,7 +1,6 @@
 package org.racingarena.client.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -42,7 +41,7 @@ public class GameScreen implements Screen {
     private float[] distances;
     private int[] scores;
     private final int playerCount;
-    private final int round;
+    private final int raceLength;
     private final int index;
     // simulate the state of player
     private PlayerState playerState = PlayerState.RACING;
@@ -140,7 +139,7 @@ public class GameScreen implements Screen {
         rootTable.add(panelTable).maxHeight(100.0f).width(Property.WIDTH);
 
         playerCount = game.gamePlay.getPlayerCount();
-        round = game.gamePlay.getRound();
+        raceLength = game.gamePlay.getRaceLength();
         index = game.gamePlay.getIndex();
         distances = new float[playerCount];
         scores = new int[playerCount];
@@ -198,15 +197,15 @@ public class GameScreen implements Screen {
         game.batch.draw(audienceT, Property.LRACE_MAX * Property.TSIZE, 0, Property.TSIZE, Property.ROTATE_ORIGIN, Property.TSIZE * 2, Property.TSIZE, 1, 1, 0, 0, 0, Property.TSIZE * 4, Property.TSIZE * 2, true, true);
         for (int i = 1; i <= Property.NCAR; ++i) {
             game.batch.draw(edgeT, 0, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
-            for (int j = 1; j < round; ++j) {
+            for (int j = 1; j < raceLength; ++j) {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             if (i % 2 == 0) {
-                game.batch.draw(finish1T, round * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
+                game.batch.draw(finish1T, raceLength * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             } else {
-                game.batch.draw(finish2T, round * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
+                game.batch.draw(finish2T, raceLength * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
-            for (int j = round + 1; j <= Property.LRACE_MAX; ++j) {
+            for (int j = raceLength + 1; j <= Property.LRACE_MAX; ++j) {
                 game.batch.draw(roadT, j * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);
             }
             game.batch.draw(edgeT, (Property.LRACE_MAX + 1) * Property.TSIZE, i * Property.TSIZE, Property.TSIZE, Property.TSIZE);

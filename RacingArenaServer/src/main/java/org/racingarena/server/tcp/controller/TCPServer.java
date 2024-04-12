@@ -1,15 +1,12 @@
 package org.racingarena.server.tcp.controller;
 
-import netscape.javascript.JSObject;
 import org.json.JSONObject;
 import org.racingarena.server.tcp.ConstantVariable;
 import org.racingarena.server.tcp.Status;
-import org.racingarena.server.tcp.controller.GamePlay;
 import org.racingarena.server.tcp.model.Player;
 import org.racingarena.server.tcp.model.WaitingRoom;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.ByteBuffer;
@@ -19,8 +16,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.Objects;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Logger;
 

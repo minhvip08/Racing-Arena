@@ -21,8 +21,8 @@ public class Main {
         }
         int raceLength = 0;
         raceLength = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-        while (raceLength < 3 || raceLength > 26) {
-            System.out.println("Enter the length of the race: (3<=N<=26)");
+        while (raceLength < 4 || raceLength > 25) {
+            System.out.println("Enter the length of the race: (3<N<26)");
             raceLength = scanner.nextInt();
         }
         WaitingRoom.MAX_PLAYER = numberOfPlayers;
