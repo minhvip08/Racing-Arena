@@ -44,10 +44,10 @@ public class FinishedScreen implements Screen {
         String Msg;
 
         if (game.gamePlay.getWinner() != null){
-            Msg = "Congratulation! you are the winner:))";
+            Msg = "The winner is " + game.gamePlay.getWinner().name() + ", score: " + game.gamePlay.getWinner().score();
         }
         else{
-            Msg = "You got eliminated!";
+            Msg = "All player is eliminated!";
         }
 
         rootTable.row();
