@@ -240,7 +240,7 @@ public class GameScreen implements Screen {
                     if (score > 0) {
                         distances[i] = score * Property.TSIZE - carS[i].getX();
                     }
-                    scores[i] = players.get(i).score();
+                    scores[i] = score;
                 }
             }
             game.gamePlay.setStatus(null);

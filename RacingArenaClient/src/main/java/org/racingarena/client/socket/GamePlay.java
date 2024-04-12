@@ -115,6 +115,18 @@ public class GamePlay {
         return this.winner;
     }
 
+    public synchronized void reset() {
+        this.username = null;
+        this.registered = false;
+        this.status = null;
+        this.players = null;
+        this.round = 0;
+        this.winner = null;
+        this.playerCount = 0;
+        this.validName = true;
+        this.questionNAnswer = new QuestionNAnswer();
+    }
+
     public GamePlay() {
         this.barrier = new CyclicBarrier(2);
         this.username = null;
