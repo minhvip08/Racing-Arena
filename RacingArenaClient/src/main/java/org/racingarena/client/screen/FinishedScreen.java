@@ -61,7 +61,7 @@ public class FinishedScreen implements Screen {
         rootTable.add(messageLabel).colspan(2).growX();
 
         rootTable.row();
-        label = new Label("The window will close in", skin);
+        label = new Label("You will return to the registration screen in", skin);
         label.setAlignment(Align.top);
         rootTable.add(label).colspan(2).growX();
 
@@ -85,7 +85,8 @@ public class FinishedScreen implements Screen {
             timeSeconds -= period;
             timer--;
             if (timer <= 0) {
-                System.exit(0);
+                game.gamePlay.reset();
+                game.setScreen(new RegistrationScreen(game));
             }
         }
         else timeLabel.setText(Integer.toString(timer));

@@ -70,10 +70,11 @@ public class Client implements Runnable {
             if (key.isReadable()) {
                 JSONObject msg = processRead(key);
                 System.out.println("[Server]: " + msg);
-                if (msg == null) {
-                    this.handleClose();
-                    return true;
-                }
+//                if (msg == null) {
+//                    this.handleServerShutdown();
+//                    return true;
+//                }
+                assert msg != null;
                 if (!gamePlay.getRegistered()) {
                     switch (msg.getString("status")) {
                         case Status.CLIENT_REGISTER:
@@ -147,6 +148,10 @@ public class Client implements Runnable {
                     System.out.println("Enter username: (bye -> exit)");
                     this.handleRegister(gamePlay.getUsername());
                     gamePlay.setUsername(null);
+                }
+                if (!gamePlay.isRunning()) {
+                    this.announceClientShutdown();
+                    return true;
                 }
             }
         }
@@ -224,11 +229,19 @@ public class Client implements Runnable {
         }
         return null;
     }
-    public void handleClose() throws IOException {
+    public void handleServerShutdown() throws IOException {
         logger.info("Client closed");
         JSONObject obj = new JSONObject();
         obj.put("status", Status.SERVER_SHUTDOWN);
         this.client.close();
+    }
+
+    public void announceClientShutdown() throws IOException {
+        JSONObject obj = new JSONObject();
+        obj.put("status", Status.CLIENT_SHUTDOWN);
+        this.send(obj);
+        this.client.close();
+        gamePlay.shutdown();
     }
 
     public JSONObject processRead(SelectionKey key) throws Exception {

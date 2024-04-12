@@ -21,6 +21,7 @@ public class GamePlay {
     private boolean validName;
     private ArrayList<Player> players;
     public final CyclicBarrier barrier;
+    private boolean running = true;
 
     public synchronized String getUsername() {
         return username;
@@ -113,6 +114,14 @@ public class GamePlay {
 
     public synchronized Winner getWinner() {
         return this.winner;
+    }
+
+    public synchronized void shutdown() {
+        this.running = false;
+    }
+
+    public synchronized boolean isRunning() {
+        return this.running;
     }
 
     public synchronized void reset() {

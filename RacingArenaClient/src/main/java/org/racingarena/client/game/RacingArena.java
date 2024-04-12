@@ -1,4 +1,5 @@
 package org.racingarena.client.game;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.racingarena.client.screen.RegistrationScreen;
@@ -26,7 +27,6 @@ public class RacingArena extends Game {
         }
         catch (Exception e) {
             e.printStackTrace();
-            //System.exit(0);
         }
         this.setScreen(new RegistrationScreen(this));
     }
@@ -39,5 +39,6 @@ public class RacingArena extends Game {
     @Override
     public void dispose() {
         batch.dispose();
+        gamePlay.shutdown();
     }
 }
