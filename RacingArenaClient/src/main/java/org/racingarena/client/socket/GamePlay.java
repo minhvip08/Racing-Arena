@@ -15,6 +15,7 @@ public class GamePlay {
     private QuestionNAnswer questionNAnswer;
 
     private boolean submit = false;
+    private Winner winner;
     private boolean validName;
     private ArrayList<Player> players;
     public final CyclicBarrier barrier;
@@ -94,18 +95,6 @@ public class GamePlay {
         this.newQuestion = newQuestion;
     }
 
-    public GamePlay() {
-        this.barrier = new CyclicBarrier(2);
-        this.username = null;
-        this.registered = false;
-        this.status = null;
-        this.players = null;
-        this.round = 0;
-        this.playerCount = 0;
-        this.validName = true;
-        this.questionNAnswer = new QuestionNAnswer();
-    }
-
     public synchronized int getPlayerCount() {
         return this.playerCount;
     }
@@ -114,4 +103,24 @@ public class GamePlay {
         this.playerCount = playerCount;
     }
 
+    public synchronized void setWinner(Winner winner) {
+        this.winner = winner;
+    }
+
+    public synchronized Winner getWinner() {
+        return this.winner;
+    }
+
+    public GamePlay() {
+        this.barrier = new CyclicBarrier(2);
+        this.username = null;
+        this.registered = false;
+        this.status = null;
+        this.players = null;
+        this.round = 0;
+        this.winner = null;
+        this.playerCount = 0;
+        this.validName = true;
+        this.questionNAnswer = new QuestionNAnswer();
+    }
 }

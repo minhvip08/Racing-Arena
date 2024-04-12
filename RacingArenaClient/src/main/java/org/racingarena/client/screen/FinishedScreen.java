@@ -9,11 +9,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import org.racingarena.client.game.RacingArena;
+import org.racingarena.client.socket.Status;
+import org.racingarena.client.socket.Winner;
+
+import java.util.Objects;
 
 public class FinishedScreen implements Screen {
     final RacingArena game;
     final Stage stage;
     final Skin skin;
+    final Winner winner;
     private float timeSeconds = 0f;
     private float period = 1f;
 
@@ -24,6 +29,8 @@ public class FinishedScreen implements Screen {
     public FinishedScreen(final RacingArena game) {
         this.game = game;
         this.stage = new Stage();
+        this.winner = game.gamePlay.getWinner();
+
         Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.classpath("orangepeelui/uiskin.json"));

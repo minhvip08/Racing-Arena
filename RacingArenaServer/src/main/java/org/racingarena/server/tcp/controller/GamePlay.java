@@ -3,12 +3,13 @@ package org.racingarena.server.tcp.controller;
 import org.json.JSONObject;
 import org.racingarena.server.tcp.Status;
 import org.racingarena.server.tcp.model.Player;
+import org.racingarena.server.tcp.model.PlayerExtra;
 import org.racingarena.server.tcp.model.Question;
 import org.racingarena.server.tcp.model.WaitingRoom;
 
-import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class GamePlay extends Thread {
@@ -48,7 +49,7 @@ public class GamePlay extends Thread {
 
     public void startGame() {
 //        Change from check round to check max score
-        while (waitingRoom.getHighestScorePlayer().getScore() < WaitingRoom.MAX_SCORE) {
+        while (waitingRoom.getHighestScorePlayer().player().getScore() < WaitingRoom.MAX_SCORE) {
             Question currentQuestion = startRound();
 
 //            Wait for all players to answer
@@ -144,7 +145,12 @@ public class GamePlay extends Thread {
         else {
             response.put("status", Status.CLIENT_END_GAME);
             response.put("message", "Game is ended");
-            response.put("winner", waitingRoom.getHighestScorePlayer().getName());
+            final PlayerExtra winner = waitingRoom.getHighestScorePlayer();
+            response.put("winner", Map.of(
+                    "name", winner.player().getName(),
+                    "score", winner.player().getScore(),
+                    "index", winner.index()
+            ));
         }
 
         waitingRoom.broadcastEndGame(response);

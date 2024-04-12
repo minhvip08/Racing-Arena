@@ -240,7 +240,8 @@ public class GameScreen implements Screen {
             }
         }
         // Real
-        if (Objects.equals(game.gamePlay.getStatus(), Status.CLIENT_PLAYERS_STATUS)) {
+        final String status =game.gamePlay.getStatus();
+        if (Objects.equals(status, Status.CLIENT_PLAYERS_STATUS)) {
             final ArrayList<Player> players = game.gamePlay.getPlayers();
             for (int i = 0; i < playerCount; ++i) {
                 if (players.get(i).isEliminated()) {
@@ -256,7 +257,9 @@ public class GameScreen implements Screen {
             }
             game.gamePlay.setStatus(null);
         }
-        else if (Objects.equals(game.gamePlay.getStatus(), Status.CLIENT_END_GAME)) {
+        else if (Objects.equals(status, Status.CLIENT_ALL_PLAYERS_ELIMINATED) ||
+                Objects.equals(status, Status.CLIENT_END_GAME)) {
+            game.gamePlay.setStatus(null);
             game.setScreen(new FinishedScreen(game));
         }
     }

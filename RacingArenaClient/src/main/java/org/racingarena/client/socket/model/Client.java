@@ -2,10 +2,7 @@ package org.racingarena.client.socket.model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.racingarena.client.socket.ConstantVariable;
-import org.racingarena.client.socket.GamePlay;
-import org.racingarena.client.socket.Player;
-import org.racingarena.client.socket.Status;
+import org.racingarena.client.socket.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -122,7 +119,24 @@ public class Client implements Runnable {
                         break;
                     case Status.CLIENT_END_GAME:
                         System.out.println("Game ended");
-                        gamePlay.setStatus(Status.CLIENT_END_GAME);
+                        try {
+                            JSONObject winnerJson = msg.getJSONObject("winner");
+                            Winner winner = new Winner(
+                                    winnerJson.getString("name"),
+                                    winnerJson.getInt("score"),
+                                    winnerJson.getInt("index")
+                            );
+                            gamePlay.setWinner(winner);
+                            gamePlay.setStatus(Status.CLIENT_END_GAME);
+                        }
+                        catch (Exception e) {
+                            System.out.println("Error: " + e.getMessage());
+                        }
+                        break;
+                    case Status.CLIENT_ALL_PLAYERS_ELIMINATED:
+                        System.out.println("Game ended. All players eliminated");
+                        gamePlay.setWinner(null);
+                        gamePlay.setStatus(Status.CLIENT_ALL_PLAYERS_ELIMINATED);
                         break;
                 }
             }

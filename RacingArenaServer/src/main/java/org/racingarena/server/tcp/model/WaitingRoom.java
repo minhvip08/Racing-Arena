@@ -90,19 +90,22 @@ public class WaitingRoom {
         }
     }
 
-    public synchronized Player getHighestScorePlayer() {
+    public synchronized PlayerExtra getHighestScorePlayer() {
         Player highestScorePlayer = null;
+        int i = -1, j = 0;
         for (Player player : players.values()) {
+            ++i;
             if (player.isEliminated())
                 continue;
             if (highestScorePlayer == null || player.getScore() > highestScorePlayer.getScore() ||
                     (player.getScore() == highestScorePlayer.getScore() && (player.getTimestamp() != null && highestScorePlayer.getTimestamp() != null && player.getTimestamp().isBefore(highestScorePlayer.getTimestamp())))) {
                 highestScorePlayer = player;
+                j = i;
             }
         }
         if (highestScorePlayer != null)
             maxScore = highestScorePlayer.getScore();
-        return highestScorePlayer;
+        return new PlayerExtra(highestScorePlayer, j);
     }
 
 ////    Get all players who are registered and not eliminated, sorted by timestamp
