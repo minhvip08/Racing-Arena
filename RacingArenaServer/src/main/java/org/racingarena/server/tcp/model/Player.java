@@ -17,6 +17,7 @@ public class Player {
     private Instant timestamp;
     private Integer answer;
     private Integer losingStreak = 0;
+    public int index = 0;
 
     public Player(SelectionKey key, String name) {
         this.key = key;

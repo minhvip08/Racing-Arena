@@ -43,8 +43,13 @@ public class WaitingRoom {
         }
 
 
+
         logger.info("One Client joined the waiting room");
         players.put(player.getKey(), player);
+
+//        Set the index of the player
+        player.index = players.size() - 1;
+
         return true;
     }
 
