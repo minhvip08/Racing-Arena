@@ -176,15 +176,14 @@ public class GameScreen implements Screen {
         if (timeSeconds > period){
             timeSeconds-=period;
             timer--;
-            if (timer < 0 && game.gamePlay.isNewQuestion() && !game.gamePlay.isSubmit()){
+            if (game.gamePlay.isNewQuestion() && !game.gamePlay.isSubmit()){
                 timer = game.gamePlay.getQuestionNAnswer().getDuration();
                 calculationLabel.setText(game.gamePlay.getQuestionNAnswer().getQuestion());
                 game.gamePlay.setNewQuestion(false);
                 Messages = "Enter your answer";
             }
-            else if (timer < 0){
-                timerLabel.setText("0");
-                Messages = "Waiting for the question";
+            else if (timer < 0 && !game.gamePlay.isSubmit()){
+                Messages = "Waiting for the new question!";
             }
             else timerLabel.setText(Integer.toString(timer));
         }
